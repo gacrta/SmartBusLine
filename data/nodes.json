@@ -4,82 +4,82 @@
     "lenght":"10",
     "nodes": [
       {
-        "id":"0",
+        "id":0,
         "label":"A",
         "distance":[10, 14],
         "neighbors":["B", "J"]},
       {
-        "id":"1",
+        "id":1,
         "label":"B",
         "distance":[7],
         "neighbors":["C"] },
         {
-        "id":"2",
+        "id":2,
         "label":"C",
         "distance":[14, 11],
         "neighbors":["E", "N"] },
         {
-        "id":"3",
+        "id":3,
         "label":"D",
         "distance":[9],
         "neighbors":["P"] },
         {
-        "id":"4",
+        "id":4,
         "label":"E",
         "distance":[17],
         "neighbors":["H"] },
         {
-        "id":"5",
+        "id":5,
         "label":"F",
         "distance":[13],
         "neighbors":["D"] },
         {
-        "id":"6",
+        "id":6,
         "label":"G",
         "distance":[8],
         "neighbors":["F"] },
         {
-        "id":"7",
+        "id":7,
         "label":"H",
         "distance":[10, 8],
         "neighbors":["I", "K"] },
         {
-        "id":"8",
+        "id":8,
         "label":"I",
         "distance":[6],
         "neighbors":["A"] },
         {
-        "id":"9",
+        "id":9,
         "label":"J",
         "distance":[13],
         "neighbors":["G"] },
         {
-        "id":"10",
+        "id":10,
         "label":"K",
         "distance":[13],
         "neighbors":["M"] },
         {
-        "id":"11",
+        "id":11,
         "label":"L",
         "distance":[10],
         "neighbors":["I"] },
         {
-        "id":"12",
+        "id":12,
         "label":"M",
         "distance":[12],
         "neighbors":["O"] },
         {
-        "id":"13",
+        "id":13,
         "label":"N",
         "distance":[11],
         "neighbors":["L"] },
         {
-        "id":"14",
+        "id":14,
         "label":"O",
         "distance":[12, 16],
         "neighbors":["D", "E"] },
         {
-        "id":"15",
+        "id":15,
         "label":"P",
         "distance":[8],
         "neighbors":["A"] }
