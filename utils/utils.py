@@ -13,6 +13,7 @@ def readNodesJsonFile():
 
 
 def parseJsonString(jsonString):
+    """ creates nodes list from jsonString """
     nodes = []
     jsonStruct = json.loads(jsonString)
     for jsonNode in jsonStruct['network']['nodes']:
