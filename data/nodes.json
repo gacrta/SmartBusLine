@@ -100,36 +100,41 @@
         "label":"P",
         "distance":[40, 28],
         "neighbors":["T1", "J"] },
-		{
-        "id":15,
+        {
+        "id":16,
+        "label":"Q",
+        "distance":[12, 16],
+        "neighbors":["F", "P"] },
+		 {
+        "id":17,
         "label":"R",
         "distance":[16, 9],
         "neighbors":["N", "T"] },
-		{
-        "id":16,
+		 {
+        "id":18,
         "label":"S",
         "distance":[16, 14, 13],
         "neighbors":["N", "D", "E"] },
-		{
-        "id":17,
+		 {
+        "id":19,
         "label":"T",
         "distance":[12, 9],
         "neighbors":["V", "H"] },
-		{
-        "id":18,
+		 {
+        "id":20,
         "label":"U",
         "distance":[10, 14],
         "neighbors":["S", "H"] },
-		{
-        "id":19,
+		 {
+        "id":21,
         "label":"V",
         "distance":[12, 13],
         "neighbors":["M", "L"] },
-		{
-        "id":20,
+		 {
+        "id":22,
         "label":"W",
         "distance":[16, 8],
-        "neighbors":["U", "L"] },
+        "neighbors":["U", "L"] }
       ]
   }
 }

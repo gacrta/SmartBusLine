@@ -15,8 +15,17 @@ def readNodesJsonFile():
 def parseJsonString(jsonString):
     """ creates nodes list from jsonString """
     nodes = []
+    terminals = []
     jsonStruct = json.loads(jsonString)
     for jsonNode in jsonStruct['network']['nodes']:
-        nodes.append(node.Node(jsonNode['id'], jsonNode['label'],
-                               jsonNode['neighbors'], jsonNode['distance']))
-    return nodes
+        nodes.append(node.Node(jsonNode['id'],
+                               jsonNode['label'],
+                               jsonNode['neighbors'],
+                               jsonNode['distance']))
+
+    for jsonNode in jsonStruct['network']['terminals']:
+        terminals.append(node.Node(jsonNode['id'],
+                                   jsonNode['label'],
+                                   jsonNode['neighbors'],
+                                   jsonNode['distance']))
+    return [nodes, terminals]
