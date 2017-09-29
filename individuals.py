@@ -8,7 +8,11 @@ import random
 # que passem por todos os seus nos e comece/
 # termine em algum dos terminais
 
+# https://stackoverflow.com/questions/448271/what-is-init-py-for?rq=1
+
 # https://pt.stackoverflow.com/questions/109013/quando-devo-usar-init-em-fun%C3%A7%C3%B5es-dentro-de-classes
+# https://stackoverflow.com/questions/625083/python-init-and-self-what-do-they-do
+# https://stackoverflow.com/questions/8609153/why-do-we-use-init-in-python-classes
 
 class Individuals:
     
