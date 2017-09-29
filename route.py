@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import node
-import random
 
 
 class Route:
-    def __init__(self, label="", nodes=[]):
+    def __init__(self, label="", nodes=None):
         self.label = label
-        self.nodes = nodes
+        if nodes is None:
+            self.nodes = []
+        else:
+            self.nodes = nodes
         self.length = self.evalRouteDistance()
 
     def __str__(self):
@@ -26,8 +28,6 @@ class Route:
     def getLastNode(self):
         if len(self.nodes) != 0:
             return self.nodes[-1]
-            key = random.choice(self.nodes[-1].getNeighbors())
-            self.addNode(self.getNodeByLabel(key))
 
     def getNodeByLabel(self, nodeLabel):
         for aNode in self.nodes:
@@ -46,5 +46,7 @@ class Route:
         return cDistance
 
     def printRouteNodes(self):
+        print "Print route  " + self.label
         for aNode in self.nodes:
-            print aNode.getLabel()
+            print aNode.getLabel(),
+        print ""
