@@ -8,6 +8,7 @@ import random
 # que passem por todos os seus nos e comece/
 # termine em algum dos terminais
 
+# http://mikegrouchy.com/blog/2012/05/be-pythonic-__init__py.html
 # https://stackoverflow.com/questions/448271/what-is-init-py-for?rq=1
 
 # https://pt.stackoverflow.com/questions/109013/quando-devo-usar-init-em-fun%C3%A7%C3%B5es-dentro-de-classes
