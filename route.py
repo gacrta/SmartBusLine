@@ -31,8 +31,6 @@ class Route:
   def getLastNode(self):
     if len(self.nodes) != 0:
       return self.nodes[-1]
-    key = random.choice(self.nodes[-1].getNeighbors())
-    self.addNode(self.getNodeByLabel(key))
 
   def getNodeByLabel(self, nodeLabel):
     
@@ -51,6 +49,14 @@ class Route:
         for i in range( 1, len(self.nodes) ):
             cDistance += self.nodes[i].getDistanceOfNode(self.nodes[i-1])
     return cDistance
+
+	def startNewRandomRoute(nodesList, numberOfNodes):
+    newRoute = Route("Random Route")
+    newRoute.addNode(random.choice(nodesList))
+    for i in range(numberOfNodes-1):
+      key = random.choice(newRoute.getLastNode().getNeighbors())
+      newRoute.addNode(nodesList.getNodeByLabel( key))
+    return newRoute
 
   def genRoute(source, sink, nodesList):
     newRoute = Route("Random Route")
