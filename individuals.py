@@ -8,6 +8,8 @@ import random
 # que passem por todos os seus nos e comece/
 # termine em algum dos terminais
 
+# https://pt.stackoverflow.com/questions/109013/quando-devo-usar-init-em-fun%C3%A7%C3%B5es-dentro-de-classes
+
 class Individuals:
     
     def __init__ (self, label="", routes=[]):
