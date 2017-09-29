@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Sep 12 19:24:38 2017
-
-@author: gabri
+Created on 2017
+@author: danier - gabri inspirated
 """
-from utils.utils import readNodesJsonFile, parseJsonString
-# Demo file for Spyder Tutorial
-# Hans Fangohr, University of Southampton, UK
-
-
-def hello():
-    """Print "Hello World" and return None"""
-    print("Laters World")
+import route
+#import random
+from utils.utils import nodesFromJsonFile
 
 # main program starts here
-hello()
-jsonString = readNodesJsonFile()
-nodes = parseJsonString(jsonString)
-print nodes
+[terms, nodes] = nodesFromJsonFile()
+print (terms)
+print (nodes)
+mRoute = route.Route("Test", nodes)
+mRoute.printRouteNodes()
+print ("test new route")
+newRoute = startNewRandomRoute(nodes, 5)
+newRoute.printRouteNodes()
+# OO eh confuso
