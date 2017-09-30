@@ -75,8 +75,18 @@ class Individuals:
         individualMutated = []
         
 				# como fazer a mutacao? alterando uma rota dentro do indiv(1)? tirar uma das rotas e colocar outra nova(2)?
-				# (2) eh mais facil
 				
+				# (1)
+				route = random.choice(ind)
+				newLastNodeIndex = randint(1, len(route))
+				for i in range(newLastNodeIndex):
+					individualMutated.append(route[i])
+				tEnd = random.choice(termNodes)
+				routeGene = route.Route.genRoute( route[newLastNodeIndex - 1], tEnd, simpleNodes )
+				individualMutated.extend(routeGene)
+				
+				"""
+				# (2)
 				for i in ind:
 					lucky = random.choice(1,2)
 					if (lucky == 1):
@@ -84,7 +94,7 @@ class Individuals:
 					else:
 						routeGene = route.Route.genRoute( tIni, tEnd, simpleNodes )
 						individuo.append(routeGene)
-        
+        """
         return individualMutated
 
     
