@@ -25,7 +25,7 @@ class Node:
         return self.label
 
     def getNeighbors(self):
-        return self.neighbors.keys()
+        return list(self.neighbors.keys())
 
     def getDistanceOfNode(self, aNode):
         if aNode.getLabel() in self.getNeighbors():

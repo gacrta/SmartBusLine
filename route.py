@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import node
+import utils.utils as utils
 
 
 class Route:
+    jsonString = utils.readNodesJsonFile()
+    [Nodes, Terminals] = utils.parseJsonString(jsonString)
+    del(jsonString)
+
     def __init__(self, label="", nodes=None):
         self.label = label
         if nodes is None:
@@ -45,8 +50,24 @@ class Route:
                 cDistance += aNode.getDistanceOfNode(lastNode)
         return cDistance
 
+    def removeLastNode(self):
+        if len(self.nodes) != 0:
+            return self.nodes.pop()
+
     def printRouteNodes(self):
-        print "Print route  " + self.label
+        print ("Print route  " + self.label)
         for aNode in self.nodes:
-            print aNode.getLabel(),
-        print ""
+            print (aNode.getLabel()),
+        print ("")
+
+    # returns a list of available nodes of last neighbor
+    def getValidNeighbors(self):
+        validNodes = [];
+        lastNode = self.getLastNode()
+        neighborhood = lastNode.getNeighbors()
+        for neighbor in neighborhood:
+            neighborNode = self.getNodeByLabel(neighbor)
+            # denys existing inner nodes, but adds a terminal neighbor
+            if ((neighborNode is None) or (neighborNode in Route.Terminals)):
+                validNodes.append(neighbor)
+        return validNodes

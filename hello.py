@@ -7,8 +7,6 @@ Created on Tue Sep 12 19:24:38 2017
 import route
 import random
 
-from utils.utils import readNodesJsonFile, parseJsonString
-
 
 def startNewRandomRoute(nodesList, numberOfNodes):
     newRoute = route.Route("Random Route")
@@ -19,22 +17,21 @@ def startNewRandomRoute(nodesList, numberOfNodes):
 
 
 def addRandomNeighborNode(aRoute, nodeList):
-    # picks a random neighbor label from last node
-    key = random.choice(aRoute.getLastNode().getNeighbors())
-    # gets the node from nodeList
-    node = getNodeByLabel(nodeList, key)
-    if node is not None:
-        if aRoute.getNodeByLabel(key) is None:
-            aRoute.addNode(node)
-            print "[addRandomNeighborNode] Node " + key + " added to route "
-            + aRoute.label
-            return True
+    neighborList = aRoute.getValidNeighbors()
+    if len(neighborList) != 0:
+        # picks a random neighbor label from last node
+        key = random.choice(neighborList)
+        # gets the node from nodeList
+        node = getNodeByLabel(nodeList, key)
+        if node is not None:
+            if aRoute.getNodeByLabel(key) is None:
+                aRoute.addNode(node)
+                print ("Node " + key + " added to route " + aRoute.label)
+                return key
+            else:
+                print ("Node " + key + " already present " + "at route " + aRoute.label)
         else:
-            print "[addRandomNeighborNode] Node " + key + " already present "
-            + "at route " + aRoute.label
-    else:
-        print "[addRandomNeighborNode] Node " + key + " not found."
-    return False
+            print ("Node " + key + " not found.")
 
 
 def startRandomRouteFromTerminal(nodesList, terminalsList, routeLabel=""):
@@ -48,7 +45,7 @@ def startRandomRouteFromTerminal(nodesList, terminalsList, routeLabel=""):
                 return newRoute
             else:
                 # TODO
-                print "[startRandomRouteFromTerminal]: node duplicated"
+                print ("[startRandomRouteFromTerminal]: node duplicated")
                 return
 
 
@@ -56,14 +53,14 @@ def getNodeByLabel(nodesList, nodeLabel):
     for aNode in nodesList:
         if nodeLabel == aNode.getLabel():
             return aNode
-    print "getNodeByLabel: Node " + nodeLabel + " not found."
+    print ("getNodeByLabel: Node " + nodeLabel + " not found.")
 
 # main program starts here
-jsonString = readNodesJsonFile()
-[nodes, terminals] = parseJsonString(jsonString)
-print nodes
-print terminals
-print "start route array"
+nodes = route.Route.Nodes
+print (nodes)
+terminals = route.Route.Terminals
+print (terminals)
+print ("start route array")
 routeArray = []
 for i in range(10):
     routeArray.append(startRandomRouteFromTerminal(nodes, terminals, str(i)))
