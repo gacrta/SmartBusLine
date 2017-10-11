@@ -21,29 +21,29 @@ class Individuals:
         self.label = label
         self.routes = routes
     
-		def __str__ (self):
-			print ("varias rota")
+	def __str__ (self):
+		print ("varias rota")
 		
     def createIndividual (termNodes, simpleNodes):
         individuo = [] # array de rotas
 				
-				#numOfNodes = 0
+		#numOfNodes = 0
         #allNodes = FALSE
-				#while (!allNodes):
-				# se tiver que passar por todos os nos da rede para sair do loop gerador de individuo
-				# sera algo assim, com "switch(allNodes)" e um contador de nos/
-				# ou armazena cada no novo num array a parte e depois compara
+		#while (!allNodes):
+		# se tiver que passar por todos os nos da rede para sair do loop gerador de individuo
+		# sera algo assim, com "switch(allNodes)" e um contador de nos/
+		# ou armazena cada no novo num array a parte e depois compara
 				
-				# assim eh muito mais facil
-				for i in range (3):
-					(tIni, tEnd) = ( random.choice(termNodes), random.choice(termNodes) )
-					# como saber qdo o individuo nasceu (i.e. parar de gerar rotas pro individ): 
-					# qdo passar por todos nos? qdo atingir um random number entre 1 e x?
+		# assim eh muito mais facil
+		for i in range (3):
+			(tIni, tEnd) = ( random.choice(termNodes), random.choice(termNodes) )
+			# como saber qdo o individuo nasceu (i.e. parar de gerar rotas pro individ): 
+			# qdo passar por todos nos? qdo atingir um random number entre 1 e x?
 
-					# tem q chamar a gera rotas com um term inicio e fim - (termIni, termFim, array de nos)
-					# (se for o mesmo, seria uma rota circular)
-					routeGene = route.Route.genRoute( tIni, tEnd, simpleNodes )
-					individuo.append(routeGene)
+			# tem q chamar a gera rotas com um term inicio e fim - (termIni, termFim, array de nos)
+			# (se for o mesmo, seria uma rota circular)
+			routeGene = route.Route.genRoute( tIni, tEnd, simpleNodes )
+			individuo.append(routeGene)
         return individuo
 
 # escolhe dois individuos diferentes e escolhe
@@ -56,48 +56,40 @@ class Individuals:
 # passa uma lista de individuos p/ poder escolher RANDOM qual ind dara qual rota
     def reproduction (indList):
         individualSon = []
-				for i in range(3):
-					ind = random.choice(indList)
-					gene = random.choice(ind)
-					individualSon.append(gene)
-    
-    # usa random para escolher individ (2x se usar matriz)
-    # usa random para dar um "getRoutes" de um individ (pra ser rand a rota pega)
-    # usa random para escolher até qual nó a rota vai ser preservada e appendada a outra
-    
-		# da maneira que esta, ha o risco de formar um filho igual um pai
+		for i in range(3):
+			ind = random.choice(indList) # usa random para escolher individ (2x se usar matriz)
+			gene = random.choice(ind) # usa random para dar um "getRoutes" de um individ (pra ser rand a rota pega)
+			individualSon.append(gene) # usa random para escolher até qual nó a rota vai ser preservada e appendada a outra
+    	# da maneira que esta, ha o risco de formar um filho igual um pai
 		# pode se atacar isso comparando individuos ou soh deixando ele sofrer pressao seletiva igual
         return individualSon
     
-		# recebe o individuo a ser mutado
-		# estou tomando ind como um array; de array (rotas); de array (nos)
+	# recebe o individuo a ser mutado
+	# estou tomando ind como um array; de array (rotas); de array (nos)
     def mutation(ind, ):
         individualMutated = []
-        
-				# como fazer a mutacao? alterando uma rota dentro do indiv(1)? tirar uma das rotas e colocar outra nova(2)?
-				
-				# (1)
-				route = random.choice(ind)
-				newLastNodeIndex = randint(1, len(route))
-				for i in range(newLastNodeIndex):
-					individualMutated.append(route[i])
-				tEnd = random.choice(termNodes)
-				routeGene = route.Route.genRoute( route[newLastNodeIndex - 1], tEnd, simpleNodes )
-				individualMutated.extend(routeGene)
-				
-				"""
-				# (2)
-				for i in ind:
-					lucky = random.choice(1,2)
-					if (lucky == 1):
-						individualMutated.append(i)
-					else:
-						routeGene = route.Route.genRoute( tIni, tEnd, simpleNodes )
-						individuo.append(routeGene)
+        # como fazer a mutacao? alterando uma rota dentro do indiv(1)? tirar uma das rotas e colocar outra nova(2)?
+		# (1)
+		route = random.choice(ind)
+		newLastNodeIndex = randint(1, len(route))
+		for i in range(newLastNodeIndex):
+			individualMutated.append(route[i])
+		tEnd = random.choice(termNodes)
+		routeGene = route.Route.genRoute( route[newLastNodeIndex - 1], tEnd, simpleNodes )
+		individualMutated.extend(routeGene)
+			
+		"""
+		# (2)
+		for i in ind:
+			lucky = random.choice(1,2)
+			if (lucky == 1):
+				individualMutated.append(i)
+			else:
+				routeGene = route.Route.genRoute( tIni, tEnd, simpleNodes )
+				individuo.append(routeGene)
         """
         return individualMutated
 
-    
 """
 
 # criando individuos usando a "startNewRandomRoute" (logica antiga)
