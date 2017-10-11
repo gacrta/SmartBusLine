@@ -17,9 +17,9 @@ import random
 
 class Individuals:
     
-    def __init__ (self, label="", routes=[]):
+    def __init__ (self, label="", fitness=""):
         self.label = label
-        self.routes = routes
+        self.fitness = fitness
     
 	def __str__ (self):
 		print ("varias rota")
