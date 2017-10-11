@@ -30,4 +30,5 @@ ind = [] #individuo
 # num de iteracoes definira a pop inicial
 # e as populacoes seguintes
 for index in range (tamDaPop):
-    ind = 
+    # https://stackoverflow.com/questions/3289601/null-object-in-python
+    ind = individuals.Individuals(index, None) # para passar um NULL em Python, usa-se None
