@@ -22,6 +22,7 @@ class Route:
             self.invalid = deniedNodes
         # route length: used to rank routes
         self.length = self.evalRouteDistance()
+        self.string = None
 
     def __str__(self):
         return "Route object"
@@ -104,6 +105,25 @@ class Route:
                 validNodes.append(neighbor)
         return validNodes
 
+    # returns a string of route nodes
+    def getString(self):
+        if self.string == None:
+            routeString = ""
+            for aNode in self.nodes:
+                routeString += aNode.getLabel()
+            self.string = routeString
+        return self.string
+
+    # returns a list of nodes that this has with otherRoute
+    def getCommonNodes(self, otherRoute):
+        # TODO
+        return None
+
+    # returns true if this route is equal to otherRoute
+    def isEqualToRoute(self, otherRoute):
+        # TODO
+        return False
+
 class RouteGenerator:
     """ Static class used to create Route objects """
 
@@ -177,3 +197,17 @@ class RouteGenerator:
             routeDone = RouteGenerator.startRandomRouteFromTerminal(newRoute)
         print ("Route " + label + " is VALID.")
         return newRoute
+
+class RouteList:
+    """ Static class used handle lists of routes """
+    # compare two route lists element wise by their string elements
+    # returns common routes
+    def getCommonListElements(listA, listB):
+        commonRoutes = []
+        for a in listA:
+            for b in listB:
+                stringA = a.getString()
+                stringB = b.getString()
+                if stringA == stringB:
+                    commonRoutes.append(a)
+        return commonRoutes

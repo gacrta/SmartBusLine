@@ -158,3 +158,37 @@ class Individuals:
     
             return newIndividual
 """
+# evaluates the In Vehicle Travel time for each OD par
+def evalIVT(self, ODmatrix, transferTime):
+    solutionsTime = []
+    for line in ODmatrix:
+        for i in line:
+            for j in line:
+                if i != j:
+                    # for each node pair of OD matrix, find Ro and Rd
+                    # important: the OD matrix must be ordered equally to allNodes list
+                    originNode = route.RouteGenerator.findNodeByLabel(i)
+                    originRoutes = self.getRoutesWithNode(originNode)
+                    destinationNode = route.RouteGenerator.findNodeByLabel(j)
+                    destinationRoutes = self.getRoutesWithNode(destinationNode)
+
+                    # searches for common routes between Ro and Rd
+                    commonRoutes = route.RouteList.getCommonListElements(originRoutes, destinationRoutes)
+                    for solutionRoute in commonRoutes:
+                        solutionsTime.append(solutionRoute.evalRouteDistance())
+
+                    # if a common route is found, return the smallest time
+                    if len(solutionsTime) != 0:
+                        return min(solutionsTime)
+
+                    # otherwise, search for common nodes between Ro and Rd
+                    commonNodes = originRoutes.getCommonNodes(destinationNode)
+
+                    # if there are common nodes, get all possible times
+                    for solutionNode in commonNodes:
+                        solutionsTime.append()
+
+# method that return routes that posses interestNode                     
+def getRoutesWithNode(self, interestNode):
+    # TODO
+    return None
