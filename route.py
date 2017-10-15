@@ -21,7 +21,7 @@ class Route:
         else:
             self.invalid = deniedNodes
         # route length: used to rank routes
-        self.length = self.evalRouteDistance()
+        self.length = None
         self.string = None
 
     def __str__(self):
@@ -33,7 +33,10 @@ class Route:
     # simply append a node to nodes list
     def addNode(self, newNode):
         if isinstance(newNode, node.Node):
-            self.nodes.append(newNode)
+            mNode = newNode.cloneNode()
+            mNode.setRoute(self)
+            self.nodes.append(mNode)
+            #self.nodes.append(newNode)
         else:
             raise TypeError("The object " + str(type(newNode)) +
                             " is not of type " + str(type(node.Node())))
@@ -56,13 +59,21 @@ class Route:
     def getLabel(self):
         return self.label
 
+    def getLenght(self):
+        return self.length
+
     def evalRouteDistance(self):
-        cDistance = 0
-        if len(self.nodes) != 0:
-            lastNode = self.nodes[0]
-            for aNode in self.nodes[1:]:
-                cDistance += aNode.getDistanceOfNode(lastNode)
-        return cDistance
+        if self.length == None:
+            cDistance = 0
+            if len(self.nodes) != 0:
+                cNode = self.nodes[0]
+                for nextNode in self.nodes[1:]:
+                    cDistance += cNode.getDistanceOfNode(nextNode)
+                    cNode = nextNode
+                self.length = cDistance
+            else:
+                self.length = 0
+        return self.length
 
     # remove the last node and returns it
     def removeLastNode(self):
@@ -83,15 +94,15 @@ class Route:
     # returns true if route is terminal ended
     def isTerminalEnded(self):
         lastNode = self.getLastNode()
-        if lastNode in RouteGenerator.Terminals:
+        if RouteGenerator.isNodeOnList(lastNode,
+                                       RouteGenerator.Terminals):
             return True
         return False
 
     def printRouteNodes(self):
         print ("Print route  " + self.label)
         for aNode in self.nodes:
-            print (aNode.getLabel()),
-        print ("")
+            print (aNode.getLabel())
 
     # returns a list of available nodes of last neighbor
     def getValidNeighbors(self):
@@ -101,7 +112,10 @@ class Route:
         for neighbor in neighborhood:
             neighborNode = self.getNodeByLabel(neighbor)
             # denys existing inner nodes and invalid ones, but adds a terminal neighbor
-            if (((neighborNode is None) or (neighborNode in RouteGenerator.Terminals)) and (neighbor not in self.invalid)):
+            if (((neighborNode is None) or
+                 (RouteGenerator.isNodeOnList(neighborNode,
+                                              RouteGenerator.Terminals))) and
+                 (neighbor not in self.invalid)):
                 validNodes.append(neighbor)
         return validNodes
 
@@ -143,6 +157,13 @@ class RouteGenerator:
         for aNode in allNodes:
             if aNode.getLabel() == nodeLabel:
                 return aNode
+
+    # returns true if a interest node is in a interest list of nodes
+    def isNodeOnList(interestNode, interestList):
+        for aNode in interestList:
+            if aNode.getLabel() == interestNode.getLabel():
+                return True
+        return False
 
     # adds a random neighbor to a given route. returns true if
     # succeeds and false otherwise
@@ -199,6 +220,7 @@ class RouteGenerator:
             newRoute = Route(label)
             routeDone = RouteGenerator.startRandomRouteFromTerminal(newRoute)
         print ("Route " + label + " is VALID.")
+        newRoute.evalRouteDistance()
         return newRoute
 
 class RouteList:
