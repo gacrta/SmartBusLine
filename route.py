@@ -211,3 +211,9 @@ class RouteList:
                 if stringA == stringB:
                     commonRoutes.append(a)
         return commonRoutes
+
+    # searches for all common routes between two route lists
+    # returns a list of lists of common nodes
+    def getCommonNodesFromRouteList(listA, listB):
+        # TODO
+        return None

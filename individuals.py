@@ -165,14 +165,21 @@ def evalIVT(self, ODmatrix, transferTime):
         for i in line:
             for j in line:
                 if i != j:
-                    # for each node pair of OD matrix, find Ro and Rd
+                    # for each node pair of OD matrix, find [Ro] and [Rd]
                     # important: the OD matrix must be ordered equally to allNodes list
                     originNode = route.RouteGenerator.findNodeByLabel(i)
                     originRoutes = self.getRoutesWithNode(originNode)
                     destinationNode = route.RouteGenerator.findNodeByLabel(j)
                     destinationRoutes = self.getRoutesWithNode(destinationNode)
 
-                    # searches for common routes between Ro and Rd
+                    lenghtOR = len(originRoutes)
+                    lenghtDR = len(destinationRoutes)
+                    # if individual is not guaranteed to have all nodes, the demand
+                    # could be unattended
+                    if lenghtOR == 0 or lenghtDR == 0:
+                        return -1
+
+                    # searches for common routes between [Ro] and [Rd]
                     commonRoutes = route.RouteList.getCommonListElements(originRoutes, destinationRoutes)
                     for solutionRoute in commonRoutes:
                         solutionsTime.append(solutionRoute.evalRouteDistance())
@@ -181,14 +188,18 @@ def evalIVT(self, ODmatrix, transferTime):
                     if len(solutionsTime) != 0:
                         return min(solutionsTime)
 
-                    # otherwise, search for common nodes between Ro and Rd
-                    commonNodes = originRoutes.getCommonNodes(destinationNode)
+                    # otherwise, search for common nodes between each element of [Ro] and [Rd]
+                    commonNodes = route.RouteList.getCommonNodes(originNode, destinationNode)
+                    for nodeList in commonNodes:
+                        for aNode in nodeList:
+                            # Todo - Finish common nodes
+                            return None
 
                     # if there are common nodes, get all possible times
                     for solutionNode in commonNodes:
                         solutionsTime.append()
 
-# method that return routes that posses interestNode                     
+# method that return individual routes that posses interestNode
 def getRoutesWithNode(self, interestNode):
     # TODO
     return None
