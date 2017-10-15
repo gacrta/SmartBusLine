@@ -11,6 +11,7 @@ class Node:
         size = len(distance)
         for i in range(size):
             self.neighbors.update({neighbors[i]: distance[i]})
+        self.mRoute = None
 
     def __str__(self):
         return "Node " + self.label
@@ -35,3 +36,19 @@ class Node:
         else:
             dist = -1
         return dist
+
+    # returns a clone of this node
+    def cloneNode(self):
+        mClone = Node()
+        mClone.label = self.label
+        mClone.idx = self.idx
+        mClone.neighbors = self.neighbors
+        mClone.mRoute = self.mRoute
+        return mClone
+
+    # mRoute setter and getter
+    def setRoute(self, mRoute):
+        self.mRoute = mRoute
+
+    def getRoute(self):
+        return self.mRoute
