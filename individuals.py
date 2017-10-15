@@ -23,7 +23,7 @@ import route
 
 class Individuals:
     
-    numRotas = 3 # pode ser alterado direto aqui
+    numRoutes = 3 # pode ser alterado direto aqui
     
     def __init__ (self, label=None, fitness=None, genes=None):
         self.label = label
@@ -41,29 +41,52 @@ class Individuals:
     # recebe num de rotas que um individuo deve ter
     # recebe mais coisas?
     def createIndividual ():
-        #allNodes = route.Route.Nodes + route.Route.Terminals # concatenates the 2 lists
-        routeArray = [] # array de rotas
-        #existingNodes = []  # esse array eh o q sera comparado com o allNodes
-                            # para saber se as rotas passam por tds nos
         
-        #numOfNodes = 0
-        #allNodes = FALSE
-        #while (!allNodes):
-        # se tiver que passar por todos os nos da rede para sair do loop gerador de individuo
-        # sera algo assim, com "switch(allNodes)" e um contador de nos/
-        # ou armazena cada no novo num array a parte e depois compara
-                
-        # assim eh muito mais facil
-        for i in range (Individuals.numRotas):
-            # cria Rotas
-            newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
-            routeArray.append( newRoute )
-            #for j in newRoute.getNumberOfNodes():
-            #    if newRoute[j].getNode() not in existingNodes:
-            #        existingNodes.append( newRoute[j].getNode() )
+        allNodes = route.Route.Nodes + route.Route.Terminals # concatenates lists
+        
+        routeArray = []
+        # loop below append numRoutes routes in an individual and find nodes
+        # that no routes pass by
+        lackingLabelNodes = []
+        for i in range (Individuals.numRoutes):
+            # create Routes
+            newRoute = route.RouteGenerator.getNewRoute( str(i+1) )
+            # get labels from route
+            routeNodes = newRoute.getNodes()
             
-            # como saber qdo o individuo nasceu (i.e. parar de gerar rotas pro individ): 
-            # qdo passar por todos nos? qdo atingir um random number entre 1 e x?
+            for j in allNodes:
+                flag = 1 # flag to identify if j node label is in newRoute
+                
+                for k in routeNodes:
+                    
+                    # if this label is already in lackingNodes, 
+                    # this means that it is not a lackingNode anymore
+                    if k.getLabel() in lackingLabelNodes:
+                        lackingLabelNodes.remove(k.getLabel())
+                    
+                    # if some route label is equal to some label in allNodes
+                    # this route label shuold not go in lackingNodes list
+                    elif k.getLabel() == j.getLabel():
+                        flag= 0
+                    
+                if flag == 1:
+                    lackingLabelNodes.append(j.getLabel())
+            
+            routeArray.append( newRoute )
+        
+        distArray = []
+        
+        for someLabelNode in lackingLabelNodes:
+            
+            for someRoute in routeArray:
+                # call method that finds distance between a lacking node and
+                # its the closest node in this route
+                dist = someRoute.getDistanceRouteNode(someLabelNode)
+                distArray.append( dist )
+            
+            
+            lackingLabelNodes.pop()
+            
         
         # uma vez q o array de rotas esta criado, precisa verificar se ele esta adequado
         

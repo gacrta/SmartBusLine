@@ -123,6 +123,9 @@ class Route:
     def isEqualToRoute(self, otherRoute):
         # TODO
         return False
+    
+    def getNodes(self):
+        return self.nodes
 
 class RouteGenerator:
     """ Static class used to create Route objects """
