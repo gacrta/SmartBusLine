@@ -21,6 +21,7 @@ populacao = []
 ind = [] #individuo
 routeArray = []
 
+# cria uma populacao
 for i in range(tamPop):
     ind = individuals.Individuals(str(i))
     ind.printIndividual()
@@ -32,3 +33,14 @@ printPopulationStatus(sortedPop, 0)
 
     #print ("Route " + routeArray[-1].getLabel() + " is VALID and was added.")
     #routeArray[-1].printRouteNodes()
+
+# selects parental generation
+popOver = sortedPop[ : int( tamPop/2 ) ] # takes highest half population...
+popOver = random.sample( popOver, int( 0.9*tamPop ) ) #... and pick 0.9 of them
+popUnder = sortedPop[ int( tamPop/2 ) : ] # takes lowest half population...
+popUnder = random.sample( popUnder, int( 0.1*tamPop ) ) #... and pick 0.1 of them
+newGeneration = popOver + popUnder # making a new generation from a half of old pop
+
+# completing nextGeneration by reproduction and mutation
+
+
