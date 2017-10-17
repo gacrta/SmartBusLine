@@ -7,6 +7,7 @@ Created on Tue Sep 12 19:24:38 2017
 
 import individuals
 import operator
+import random
 
 def printPopulationStatus(pop, iteration):
     print("Population Status for " + str(iteration) + " iteration:")
@@ -36,10 +37,11 @@ printPopulationStatus(sortedPop, 0)
 
 # selects parental generation
 popOver = sortedPop[ : int( tamPop/2 ) ] # takes highest half population...
-popOver = random.sample( popOver, int( 0.9*tamPop ) ) #... and pick 0.9 of them
+popOver = random.sample( popOver, int( 0.9*( tamPop/2 ) ) ) #... and pick 0.9 of them
 popUnder = sortedPop[ int( tamPop/2 ) : ] # takes lowest half population...
-popUnder = random.sample( popUnder, int( 0.1*tamPop ) ) #... and pick 0.1 of them
+popUnder = random.sample( popUnder, int( 0.1*( tamPop ) ) ) #... and pick 0.1 of them
 newGeneration = popOver + popUnder # making a new generation from a half of old pop
+printPopulationStatus(newGeneration, 0)
 
 # completing nextGeneration by reproduction and mutation
 

@@ -8,7 +8,7 @@ Created on Fri Oct 13 19:23:44 2017
 
 #import node
 import route
-#import random
+import random
 
 # gera Individuos -> x rotas dentro da USP
 # que passem por todos os seus nos e comece/
@@ -90,23 +90,23 @@ class Individuals:
     # de cada um, aleatoriamente, umas das suas rotas
 
     # passa uma lista de individuos p/ poder escolher RANDOM qual ind dara qual rota
-		# TODO: PENSAR MELHOR EM COMO FAZER A REPRODUCAO
-		# 1. (i) se o metodo recebe um par de pais ou (ii) se recebe a lista com todos
-		# 2. (i) retorna um unico filho ou (ii) retorna a lista com a proxima geracao direto
+	 # TODO: PENSAR MELHOR EM COMO FAZER A REPRODUCAO
+	 # 1. (i) se o metodo recebe um par de pais ou (ii) se recebe a lista com todos
+	 # 2. (i) retorna um unico filho ou (ii) retorna a lista com a proxima geracao direto
     def reproduction (indList):
-			individualSon = []
-      for i in range(3):
-        ind = random.choice(indList)
-        gene = random.choice(ind)
-        individualSon.append(gene)
+        individualSon = []
+        for i in range(3):
+            ind = random.choice(indList)
+            gene = random.choice(ind)
+            individualSon.append(gene)
         
         # usa random para escolher individ (2x se usar matriz)
         # usa random para dar um "getRoutes" de um individ (pra ser rand a rota pega)
         # usa random para escolher até qual nó a rota vai ser preservada e appendada a outra
 
-      # da maneira que esta, ha o risco de formar um filho igual um pai
-      # pode se atacar isso comparando individuos ou soh deixando ele sofrer pressao seletiva igual
-      return individualSon
+        # da maneira que esta, ha o risco de formar um filho igual um pai
+        # pode se atacar isso comparando individuos ou soh deixando ele sofrer pressao seletiva igual
+        return individualSon
         
 		# TODO: COMO SERÁ A MUTAÇÃO? (i) um individuo com uma nova rota ou (ii) uma das rotas do individuo alterada?
 		# recebe o individuo a ser mutado
@@ -115,13 +115,13 @@ class Individuals:
       individualMutated = []
       # TODO: foi implementado uma variacao do (i), em q pra cada rota antiga
 			# ha 50% de chance de ela se manter e 50% de entrar um rota nova em seu lugar
-      for i in ind:
+      for i, e in enumerate(ind):
           lucky = random.choice(1,2)
           if (lucky == 1):
-              individualMutated.append(i)
+              individualMutated.append(e)
           else:
-              routeGene = route.Route.genRoute( tIni, tEnd, simpleNodes )
-              individualMutated.append(routeGene)
+              newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
+              individualMutated.append(newRoute)
       
       return individualMutated
   
