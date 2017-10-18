@@ -30,7 +30,7 @@ class Individuals:
         if genes is None:
             self.genes = Individuals.createIndividual()
         else:
-            print ("ruim")
+            self.genes = genes
             #calcula o fitness usando as rotas desse individuo
         self.fitness = self.evalFitness()
         # FIM DO GERADOR
@@ -97,7 +97,7 @@ class Individuals:
 
     def createIndividual ():
         #allNodes = route.Route.Nodes + route.Route.Terminals # concatenates the 2 lists
-        routeArray = [] # array de rotas
+        newInd = [] # array de rotas
         #existingNodes = []  # esse array eh o q sera comparado com o allNodes
                             # para saber se as rotas passam por tds nos
         
@@ -112,7 +112,7 @@ class Individuals:
         for i in range (Individuals.numRoutes):
             # cria Rotas
             newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
-            routeArray.append( newRoute )
+            newInd.append( newRoute )
             #for j in newRoute.getNumberOfNodes():
             #    if newRoute[j].getNode() not in existingNodes:
             #        existingNodes.append( newRoute[j].getNode() )
@@ -124,7 +124,7 @@ class Individuals:
         
 
 
-        return routeArray
+        return newInd
     
     # method to easily read individual contents
     def printIndividual(self):
@@ -154,40 +154,47 @@ class Individuals:
         return individualSon
     
     
-    def reproduction2 (indList):
-        sonList = indList.copy()
+    def reproduction2 (popList):
+        newPopList = popList.copy()
         # this loop shorts indList until it has 0 or 1 
         # (and could not use remove twice) elements
-        while (len(indList) > 1):
-            ind1 = random.choice(indList)
-            indList.remove(ind1)
-            ind2 = random.choice(indList)
-            indList.remove(ind2)
-            for _ in range (Individuals.numRoutes):
+        while (len(popList) > 1):
+            ind1 = random.choice(popList)
+            ind1Label = ind1.label
+            popList.remove(ind1)
+            ind2 = random.choice(popList)
+            ind2Label = ind2.label
+            popList.remove(ind2)
+            newInd1 = []
+            newInd2 = []
+            for i in range (Individuals.numRoutes):
                 lucky = random.randint(1,2)
-                if lucky == 1: sonList.append( random.choice(ind1) )
-                else: sonList.append( random.choice(ind2) )
-
-        # da maneira que esta, ha o risco de formar um filho igual um pai
-        # pode se atacar isso comparando individuos ou soh deixando ele sofrer pressao seletiva igual
-        return sonList
+                if lucky == 1:
+                    newInd1.append( random.choice(ind1.genes) )
+                    newInd2.append( random.choice(ind2.genes) )
+                else:
+                    newInd1.append( random.choice(ind2.genes) )
+                    newInd2.append( random.choice(ind1.genes) )
+            newPopList.append( Individuals(ind1Label+ind2Label, None, newInd1) )
+            newPopList.append( Individuals(ind2Label+ind1Label, None, newInd2) )
+        if len(popList) == 1: newPopList.append (Individuals.mutation(popList.pop()))
+        return newPopList
         
 		# TODO: COMO SERÁ A MUTAÇÃO? (i) um individuo com uma nova rota ou (ii) uma das rotas do individuo alterada?
 		# recebe o individuo a ser mutado
     # estou tomando ind como um array; de array (rotas); de array (nos)
     def mutation(ind):
-      individualMutated = []
-      # TODO: foi implementado uma variacao do (i), em q pra cada rota antiga
-			# ha 50% de chance de ela se manter e 50% de entrar um rota nova em seu lugar
-      for i, e in enumerate(ind):
-          lucky = random.choice(1,2)
-          if (lucky == 1):
-              individualMutated.append(e)
-          else:
-              newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
-              individualMutated.append(newRoute)
-      
-      return individualMutated
+        indMutated = []
+        # TODO: foi implementado uma variacao do (i), em q pra cada rota antiga
+		  # ha 50% de chance de ela se manter e 50% de entrar um rota nova em seu lugar
+        for i, e in enumerate(ind.genes):
+            lucky = random.randint(1,2)
+            if (lucky == 1):
+                indMutated.append(e)
+            else:
+                newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
+                indMutated.append(newRoute)
+        return Individuals(ind.getLabel() + ind.getLabel(), None, indMutated)
   
     """   
   

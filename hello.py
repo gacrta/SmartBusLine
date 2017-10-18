@@ -18,17 +18,15 @@ def printPopulationStatus(pop, iteration):
 
 def populationSort(pop):
         return sorted(pop, key=operator.attrgetter("fitness"), reverse=True)
-    
+
 def populationSelect(pop, tamPop):
-    
+
     popOver = sortedPop[ : int( tamPop/2 ) ] # takes highest half population...
     bestInd = popOver.pop(0)
     popOver = random.sample( popOver, int( 0.9*( tamPop/2 ) - 1 ) ) #... and pick 0.9 of them
     popUnder = sortedPop[ int( tamPop/2 ) : ] # takes lowest half population...
     popUnder = random.sample( popUnder, int( 0.1*( tamPop ) ) ) #... and pick 0.1 of them
     return [bestInd] + popOver + popUnder # making a new generation from a half of old pop
-    
-    
 
 tamPop = 10 # pode ser alterado direto aqui
 populacao = []
@@ -41,14 +39,16 @@ for i in range(tamPop):
     ind.printIndividual()
     populacao.append(ind)
 
-printPopulationStatus(populacao, 0)
-sortedPop = populationSort(populacao)
-printPopulationStatus(sortedPop, 0)
-
-# selects parental generation
-newGeneration = populationSelect(sortedPop, tamPop)
-printPopulationStatus(newGeneration, 0)
-
-# completing nextGeneration by reproduction and mutation
-#nextGeneration = individuals.Individuals.reproduction2(newGeneration)
-
+for i in range(10):
+    printPopulationStatus(populacao, i)
+    sortedPop = populationSort(populacao)
+    printPopulationStatus(sortedPop, i)
+    
+    # selects parental generation
+    newGeneration = populationSelect(sortedPop, tamPop)
+    printPopulationStatus(newGeneration, i)
+    
+    # completing nextGeneration by reproduction and mutation (inside reproduction)
+    nextGeneration = individuals.Individuals.reproduction2(newGeneration)
+    printPopulationStatus(nextGeneration, i)
+    populacao = nextGeneration.copy()
