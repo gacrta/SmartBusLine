@@ -3,29 +3,29 @@
     "name":"bidirectional",
     "lenght":"10",
 		"terminals": [
-		{
+		  {
         "id":0,
         "label":"T1",
         "distance":[22, 31, 35],
         "neighbors":["A", "J", "B"] },
-		{
+		  {
         "id":1,
         "label":"T2",
         "distance":[16, 14, 10],
         "neighbors":["R", "E", "Q"] },
-		{
+    	  {
         "id":2,
         "label":"T3",
         "distance":[21, 27],
         "neighbors":["W", "O"] }
 	],
     "nodes": [
-      {
+        {
         "id":0,
         "label":"A",
         "distance":[20, 10, 28],
         "neighbors":["B", "J", "T1"]},
-      {
+        {
         "id":1,
         "label":"B",
         "distance":[18, 18, 17],

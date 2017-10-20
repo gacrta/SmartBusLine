@@ -167,9 +167,10 @@ class Individuals:
             popList.remove(ind2)
             newInd1 = []
             newInd2 = []
+            luckylast = 0
             for i in range (Individuals.numRoutes):
                 lucky = random.randint(1,2)
-                if lucky == 1:
+                if (lucky == 1 and luckylast !=1):
                     newInd1.append( random.choice(ind1.genes) )
                     newInd2.append( random.choice(ind2.genes) )
                 else:
@@ -194,7 +195,7 @@ class Individuals:
             else:
                 newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
                 indMutated.append(newRoute)
-        return Individuals(ind.getLabel() + ind.getLabel(), None, indMutated)
+        return Individuals(ind.getLabel() + "M", None, indMutated)
   
     """   
   
