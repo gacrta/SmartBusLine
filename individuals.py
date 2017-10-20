@@ -142,6 +142,18 @@ class Individuals:
             self.fitness = self.evalFitness()
         return self.fitness
 
+    def getGenes(self):
+        return self.genes
+
+    # takes an ind and return a list of cloned routes
+    def cloneIndGenes(self):
+        genes = self.getGenes()
+        routeList = []
+        for gene in genes:
+            clonedRoute = gene.cloneRoute()
+            routeList.append(clonedRoute)
+        return routeList
+
     # passa uma lista de individuos p/ poder escolher RANDOM qual ind dara qual rota
     # filhos serao sempre dois a dois? ou pode ter uns partos frutos de orgia?
 	 # TODO: PENSAR MELHOR EM COMO FAZER A REPRODUCAO
@@ -155,29 +167,29 @@ class Individuals:
     
     
     def reproduction2 (popList):
+
+        # https://www.python-course.eu/python3_deep_copy.php
+        # tutorial copy/deepcopy ~ referencias
+
         newPopList = popList.copy()
-        # this loop shorts indList until it has 0 or 1 
-        # (and could not use remove twice) elements
+        # this loop shorts indList removing two of its ind by turn, until it 
+        # has 0 or 1 (and with 0/1 elem. could not use remove twice) elements
         while (len(popList) > 1):
             ind1 = random.choice(popList)
-            ind1Label = ind1.label
             popList.remove(ind1)
             ind2 = random.choice(popList)
-            ind2Label = ind2.label
             popList.remove(ind2)
-            newInd1 = []
-            newInd2 = []
-            luckylast = 0
+            rL1, rL2 = ind1.cloneIndGenes(), ind2.cloneIndGenes()
+            newInd1, newInd2 = [], []
             for i in range (Individuals.numRoutes):
-                lucky = random.randint(1,2)
-                if (lucky == 1 and luckylast !=1):
-                    newInd1.append( random.choice(ind1.genes) )
-                    newInd2.append( random.choice(ind2.genes) )
+                r1, r2 = random.choice(rL1), random.choice(rL2)
+                if i == 2:
+                    newInd1.append( r1 ), newInd2.append( r2 )
                 else:
-                    newInd1.append( random.choice(ind2.genes) )
-                    newInd2.append( random.choice(ind1.genes) )
-            newPopList.append( Individuals(ind1Label+ind2Label, None, newInd1) )
-            newPopList.append( Individuals(ind2Label+ind1Label, None, newInd2) )
+                    newInd1.append( r2 ), newInd2.append( r1 )
+                rL1.remove(r1), rL2.remove(r2)
+            newPopList.append( Individuals(ind1.label+ind2.label, None, newInd1) )
+            newPopList.append( Individuals(ind2.label+ind1.label, None, newInd2) )
         if len(popList) == 1: newPopList.append (Individuals.mutation(popList.pop()))
         return newPopList
         

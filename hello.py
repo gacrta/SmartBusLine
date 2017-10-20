@@ -39,9 +39,10 @@ for i in range(tamPop):
     ind.printIndividual()
     populacao.append(ind)
 
+    nextGeneration = populacao.copy()
 for i in range(10):
-    printPopulationStatus(populacao, i)
-    sortedPop = populationSort(populacao)
+    printPopulationStatus(nextGeneration, i)
+    sortedPop = populationSort(nextGeneration)
     printPopulationStatus(sortedPop, i)
     
     # selects parental generation
@@ -51,4 +52,4 @@ for i in range(10):
     # completing nextGeneration by reproduction and mutation (inside reproduction)
     nextGeneration = individuals.Individuals.reproduction2(newGeneration)
     printPopulationStatus(nextGeneration, i)
-    populacao = nextGeneration.copy()
+printPopulationStatus(populacao, 10)

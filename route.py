@@ -141,6 +141,15 @@ class Route:
     def getNodes(self):
         return self.nodes
 
+    def cloneRoute(self):
+        rClone = Route()
+        rClone.label = self.label
+        rClone.nodes = self.nodes
+        rClone.invalid = self.invalid
+        rClone.length = self.length
+        rClone.string = self.string
+        return rClone
+
 class RouteGenerator:
     """ Static class used to create Route objects """
 
