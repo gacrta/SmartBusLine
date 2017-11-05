@@ -1,0 +1,40 @@
+Dados de carregamento do 'Circular 1' e do 'Circular 2' do Felipe 
+
+Circ1 (HORÁRIO 8H00 - 9H00):
+IDX - PONTO - ENTRARAM - SAÍRAM - PESSOAS DENTRO DO BUSO
+01 - T1 - 93 - 0 - 93
+02 - P1 - 1 - 0 - 94
+03 - FE - 0 - 4 - 90
+04 - CENTRAL - 0 - 3 - 87
+05 - FFLCH - 0 - 28 - 59
+06 - GEOCA - 0 - 10 - 49
+07 - FEAU - 1 - 14 - 36
+08 - POLICIRQ - 1 - 13 - 24
+09 - BANDCENT - 1 - 7 - 18
+10 - SAOREMO - 0 - 1 - 17
+11 - HU - 0 - 2 - 15
+12 - ICBIV - 0 - 0 - 15
+13 - ODONTO - 1 - 12 - 4
+14 - T3 - 15 - 1 - 18
+15 - INDIANA - 6 - 3 - 21
+16 - BIO - 0 - 3 - 18
+17 - FILOS - 0 - 0 - 18
+18 - FAUIO - 0 - 3 - 15
+19 - FISIAG - 0 - 3 - 12
+20 - BANDCENT - 1 - 0 - 13
+21 - POLICIV - 1 - 3 - 11
+22 - POLIMET - 0 - 2 - 9
+23 - POLIMEC - 0 - 0 - 9
+24 - PSICOHID - 0 - 0 - 9
+25 - FECA - 0 - 3 - 6
+26 - FECA - 1 - 0 - 7
+27 - PSICOHID - 1 - 0 - 8
+28 - PSICORAIA - 0 - 0 - 8
+29 - CRUSP - 4 - 2 - 10
+30 - CPTM - 0 - 1 - 9
+31 - EEFE - 0 - 0 - 9
+32 - P1 - 4 - 0 - 13
+33 - VITAL - 0 - 8 - 5
+34 - T1 - 0 - 5 - 0
+
+Circ2 (NÃO FOI FEITO)
