@@ -161,6 +161,7 @@ class RouteGenerator:
     del(jsonString)
 
     # static method that finds a node at data bank
+    @staticmethod
     def findNodeByLabel(nodeLabel):
         allNodes = RouteGenerator.Nodes + RouteGenerator.Terminals # concatenates the 2 lists
         for aNode in allNodes:
@@ -168,6 +169,7 @@ class RouteGenerator:
                 return aNode
 
     # returns true if a interest node is in a interest list of nodes
+    @staticmethod
     def isNodeOnList(interestNode, interestList):
         for aNode in interestList:
             if aNode.getLabel() == interestNode.getLabel():
@@ -176,6 +178,7 @@ class RouteGenerator:
 
     # adds a random neighbor to a given route. returns true if
     # succeeds and false otherwise
+    @staticmethod
     def addRandomNeighborNode(aRoute):
         neighborList = aRoute.getValidNeighbors()
         if len(neighborList) != 0:
@@ -192,6 +195,7 @@ class RouteGenerator:
             return False
 
     # receives a route and returns true if a valid route is created
+    @staticmethod
     def startRandomRouteFromTerminal(newRoute):
         numberOfNodes = newRoute.getNumberOfNodes()
         if (numberOfNodes == 0):
@@ -217,6 +221,7 @@ class RouteGenerator:
         return RouteGenerator.startRandomRouteFromTerminal(newRoute)
 
     # method that returns a valid route
+    @staticmethod
     def getNewRoute(label=""):
         if (label == ""):
             label = "sample route"
@@ -236,6 +241,7 @@ class RouteList:
     """ Static class used handle lists of routes """
     # compare two route lists element wise by their string elements
     # returns common routes
+    @staticmethod
     def getCommonListElements(listA, listB):
         commonRoutes = []
         for a in listA:

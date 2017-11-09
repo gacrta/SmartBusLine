@@ -9,6 +9,7 @@ Created on Fri Oct 13 19:23:44 2017
 #import node
 import route
 import random
+import copy
 
 # gera Individuos -> x rotas dentro da USP
 # que passem por todos os seus nos e comece/
@@ -28,7 +29,7 @@ class Individuals:
     def __init__ (self, label=None, fitness=None, genes=None):
         self.label = label
         if genes is None:
-            self.genes = Individuals.createIndividual()
+            self.genes = []
         else:
             self.genes = genes
             #calcula o fitness usando as rotas desse individuo
@@ -38,93 +39,16 @@ class Individuals:
     def __str__ (self):
         print ("varias rota")
         
-    # recebe num de rotas que um individuo deve ter
-    # recebe mais coisas?
-    """
-    def createIndividual ():
-        
-        allNodes = route.RouteGenerator.Nodes + route.RouteGenerator.Terminals # concatenates lists
-        
-        routeArray = []
-        # loop below append numRoutes routes in an individual and find nodes
-        # that no routes pass by
-        lackingLabelNodes = []
-        for i in range (Individuals.numRoutes):
-            # create Routes
-            newRoute = route.RouteGenerator.getNewRoute( str(i+1) )
-            # get labels from route
-            routeNodes = newRoute.getNodes()
-            
-            for j in allNodes:
-                flag = 1 # flag to identify if j node label is in newRoute
-                
-                for k in routeNodes:
-                    
-                    # if this label is already in lackingNodes, 
-                    # this means that it is not a lackingNode anymore
-                    if k.getLabel() in lackingLabelNodes:
-                        lackingLabelNodes.remove(k.getLabel())
-                    
-                    # if some route label is equal to some label in allNodes
-                    # this route label shuold not go in lackingNodes list
-                    elif k.getLabel() == j.getLabel():
-                        flag= 0
-                    
-                if flag == 1:
-                    lackingLabelNodes.append(j.getLabel())
-            
-            routeArray.append( newRoute )
-        
-        distArray = []
-        
-        for someLabelNode in lackingLabelNodes:
-            
-            for someRoute in routeArray:
-                # call method that finds distance between a lacking node and
-                # its the closest node in this route
-                dist = someRoute.getDistanceRouteNode(someLabelNode)
-                distArray.append( dist )
-            
-            
-            lackingLabelNodes.pop()
-            
-        
-        # uma vez q o array de rotas esta criado, precisa verificar se ele esta adequado
-        
-        return routeArray
-"""
-
-
-    def createIndividual ():
+    def createIndividual (self):
         #allNodes = route.Route.Nodes + route.Route.Terminals # concatenates the 2 lists
         newInd = [] # array de rotas
-        #existingNodes = []  # esse array eh o q sera comparado com o allNodes
-                            # para saber se as rotas passam por tds nos
-        
-        #numOfNodes = 0
-        #allNodes = FALSE
-        #while (!allNodes):
-        # se tiver que passar por todos os nos da rede para sair do loop gerador de individuo
-        # sera algo assim, com "switch(allNodes)" e um contador de nos/
-        # ou armazena cada no novo num array a parte e depois compara
                 
         # assim eh muito mais facil
         for i in range (Individuals.numRoutes):
             # cria Rotas
             newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
             newInd.append( newRoute )
-            #for j in newRoute.getNumberOfNodes():
-            #    if newRoute[j].getNode() not in existingNodes:
-            #        existingNodes.append( newRoute[j].getNode() )
-            
-            # como saber qdo o individuo nasceu (i.e. parar de gerar rotas pro individ): 
-            # qdo passar por todos nos? qdo atingir um random number entre 1 e x?
-        
-        # uma vez q o array de rotas esta criado, precisa verificar se ele esta adequado
-        
-
-
-        return newInd
+        self.genes = newInd
     
     # method to easily read individual contents
     def printIndividual(self):
@@ -160,18 +84,19 @@ class Individuals:
 	 # 1. (i) se o metodo recebe um par de pais ou (ii) se recebe a lista com todos
     # 2. (i) se appenda parte uma rota de um pai na de outro ou (ii) se pega uma rota de cada pai
 	 # 3. (i) retorna um unico filho ou (ii) retorna a lista com a proxima geracao direto
+    @staticmethod
     def reproduction1 (ind1, ind2):
         individualSon = []
         
         return individualSon
     
-    
+    @staticmethod
     def reproduction2 (popList):
 
         # https://www.python-course.eu/python3_deep_copy.php
         # tutorial copy/deepcopy ~ referencias
 
-        newPopList = popList.copy()
+        newPopList = copy.copy(popList)
         # this loop shorts indList removing two of its ind by turn, until it 
         # has 0 or 1 (and with 0/1 elem. could not use remove twice) elements
         while (len(popList) > 1):

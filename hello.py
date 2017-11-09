@@ -8,6 +8,7 @@ Created on Tue Sep 12 19:24:38 2017
 import individuals
 import operator
 import random
+import copy 
 
 def printPopulationStatus(pop, iteration):
     print("Population Status for " + str(iteration) + " iteration:")
@@ -36,10 +37,11 @@ routeArray = []
 # cria uma populacao
 for i in range(tamPop):
     ind = individuals.Individuals(str(i))
+    ind.createIndividual()
     ind.printIndividual()
     populacao.append(ind)
 
-    nextGeneration = populacao.copy()
+    nextGeneration = copy.copy(populacao)
 for i in range(10):
     printPopulationStatus(nextGeneration, i)
     sortedPop = populationSort(nextGeneration)
@@ -53,3 +55,7 @@ for i in range(10):
     nextGeneration = individuals.Individuals.reproduction2(newGeneration)
     printPopulationStatus(nextGeneration, i)
 printPopulationStatus(populacao, 10)
+
+# https://stackoverflow.com/questions/7152762/how-to-redirect-print-output-to-a-file-using-python
+# http://www.pythonforbeginners.com/files/reading-and-writing-files-in-python
+#with open("exittest", "w")
