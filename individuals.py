@@ -114,8 +114,10 @@ class Individuals:
                 else:
                     newInd1.append( r2 ), newInd2.append( r1 )
                 rL1.remove(r1), rL2.remove(r2)
-            newPopList.append( Individuals(ind1.label+ind2.label, None, newInd1) )
-            newPopList.append( Individuals(ind2.label+ind1.label, None, newInd2) )
+            #newPopList.append( Individuals(ind1.label+ind2.label, None, newInd1) )
+            #newPopList.append( Individuals(ind2.label+ind1.label, None, newInd2) )
+            newPopList.append( Individuals("", None, newInd1) )
+            newPopList.append( Individuals("", None, newInd2) )
         #if len(popList) == 1: newPopList.append (Individuals.mutation(popList.pop()))
         return newPopList
         

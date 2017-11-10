@@ -9,9 +9,10 @@ import individuals
 import operator
 import random
 import numpy
-import copy 
+import matplotlib.pyplot as plt
+import copy
 
-MUTATION_RATE = 0.5
+MUTATION_RATE = 0.05
 
 def printPopulationStatus(pop, iteration):
     print("Population Status for " + str(iteration) + " iteration:")
@@ -51,7 +52,33 @@ def getPopulationMax(popArray):
 def getPopulationStd(popArray):
     return popArray["fitness"].std()
 
-tamPop = 20 # pode ser alterado direto aqui
+def storePopulationData(dataStorage, population, iteration):
+    
+    popArray = getPopulationArray(population)
+    
+    popMean = getPopulationMean(popArray)
+    popMax = getPopulationMax(popArray)
+    popStd = getPopulationStd(popArray)
+    
+    dataStorage.append([iteration, popMax, popMean, popStd])
+
+def plotPopulationEvolution(dataStorage):
+    dataArray = numpy.array(dataStorage)
+    iterations = dataArray[:,0]
+    popMax = dataArray[:,1]
+    popMean = dataArray[:,2]
+    popStd = dataArray[:,3]
+    plt.errorbar(iterations, popMean, yerr=popStd)
+    plt.plot(iterations, popMax)
+    plt.xlabel("Iterations")
+    plt.ylabel("Distance (m)")
+    plt.title("Best Individual evolution")
+    plt.legend(["Mean", "Max"])
+    plt.grid()
+    plt.savefig("grafics.png")
+    #plt.show()
+
+tamPop = 200 # pode ser alterado direto aqui
 populacao = []
 ind = [] #individuo
 routeArray = []
@@ -63,29 +90,38 @@ for i in range(tamPop):
     populacao.append(ind)
 
 nextGeneration = copy.copy(populacao)
+populationData = []
 
-for i in range(10):
+for i in range(20):
+
+    if (i % 2 == 0):
+        storePopulationData(populationData, nextGeneration, i)
+
     #printPopulationStatus(nextGeneration, i)
     sortedPop = populationSort(nextGeneration)
     #printPopulationStatus(sortedPop, i)
-    
+
     # selects parental generation
     newGeneration = populationSelect(sortedPop, tamPop)
     #printPopulationStatus(newGeneration, i)
-    
+
     # completing nextGeneration by reproduction and mutation (inside reproduction)
     nextGeneration = individuals.Individuals.reproduction2(newGeneration)
-    
+
     popmut = random.sample(nextGeneration, int(len(nextGeneration)*MUTATION_RATE))
     for ind in popmut:
         indmut = individuals.Individuals.mutation(ind)
         nextGeneration.remove(ind)
         nextGeneration.append(indmut)
-    
+
     #printPopulationStatus(nextGeneration, i)
-    
-printPopulationStatus(populacao, 10)
+
+printPopulationStatus(populacao, 20)
+printPopulationStatus(nextGeneration, 20)
+plotPopulationEvolution(populationData)
+
+print("Done")
 
 # https://stackoverflow.com/questions/7152762/how-to-redirect-print-output-to-a-file-using-python
 # http://www.pythonforbeginners.com/files/reading-and-writing-files-in-python
-#with open("exittest", "w")
+# with open("exittest", "w")
