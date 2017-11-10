@@ -37,7 +37,6 @@ routeArray = []
 # cria uma populacao
 for i in range(tamPop):
     ind = individuals.Individuals(str(i))
-    ind.createIndividual()
     ind.printIndividual()
     populacao.append(ind)
 

@@ -29,7 +29,7 @@ class Individuals:
     def __init__ (self, label=None, fitness=None, genes=None):
         self.label = label
         if genes is None:
-            self.genes = []
+            self.genes = Individuals.createIndividual()
         else:
             self.genes = genes
             #calcula o fitness usando as rotas desse individuo
@@ -39,7 +39,8 @@ class Individuals:
     def __str__ (self):
         print ("varias rota")
         
-    def createIndividual (self):
+    @staticmethod
+    def createIndividual ():
         #allNodes = route.Route.Nodes + route.Route.Terminals # concatenates the 2 lists
         newInd = [] # array de rotas
                 
@@ -48,7 +49,7 @@ class Individuals:
             # cria Rotas
             newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
             newInd.append( newRoute )
-        self.genes = newInd
+        return newInd
     
     # method to easily read individual contents
     def printIndividual(self):
@@ -121,6 +122,7 @@ class Individuals:
 		# TODO: COMO SERÁ A MUTAÇÃO? (i) um individuo com uma nova rota ou (ii) uma das rotas do individuo alterada?
 		# recebe o individuo a ser mutado
     # estou tomando ind como um array; de array (rotas); de array (nos)
+    @staticmethod
     def mutation(ind):
         indMutated = []
         # TODO: foi implementado uma variacao do (i), em q pra cada rota antiga
