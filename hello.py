@@ -62,7 +62,8 @@ for i in range(tamPop):
     ind.printIndividual()
     populacao.append(ind)
 
-    nextGeneration = copy.copy(populacao)
+nextGeneration = copy.copy(populacao)
+
 for i in range(10):
     #printPopulationStatus(nextGeneration, i)
     sortedPop = populationSort(nextGeneration)
