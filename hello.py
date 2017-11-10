@@ -10,6 +10,8 @@ import operator
 import random
 import copy 
 
+MUTATION_RATE = 0.5
+
 def printPopulationStatus(pop, iteration):
     print("Population Status for " + str(iteration) + " iteration:")
     for ind in pop:
@@ -26,10 +28,10 @@ def populationSelect(pop, tamPop):
     bestInd = popOver.pop(0)
     popOver = random.sample( popOver, int( 0.9*( tamPop/2 ) - 1 ) ) #... and pick 0.9 of them
     popUnder = sortedPop[ int( tamPop/2 ) : ] # takes lowest half population...
-    popUnder = random.sample( popUnder, int( 0.1*( tamPop ) ) ) #... and pick 0.1 of them
+    popUnder = random.sample( popUnder, int( 0.1*( tamPop/2 ) ) ) #... and pick 0.1 of them
     return [bestInd] + popOver + popUnder # making a new generation from a half of old pop
 
-tamPop = 10 # pode ser alterado direto aqui
+tamPop = 20 # pode ser alterado direto aqui
 populacao = []
 ind = [] #individuo
 routeArray = []
@@ -42,17 +44,25 @@ for i in range(tamPop):
 
     nextGeneration = copy.copy(populacao)
 for i in range(10):
-    printPopulationStatus(nextGeneration, i)
+    #printPopulationStatus(nextGeneration, i)
     sortedPop = populationSort(nextGeneration)
-    printPopulationStatus(sortedPop, i)
+    #printPopulationStatus(sortedPop, i)
     
     # selects parental generation
     newGeneration = populationSelect(sortedPop, tamPop)
-    printPopulationStatus(newGeneration, i)
+    #printPopulationStatus(newGeneration, i)
     
     # completing nextGeneration by reproduction and mutation (inside reproduction)
     nextGeneration = individuals.Individuals.reproduction2(newGeneration)
-    printPopulationStatus(nextGeneration, i)
+    
+    popmut = random.sample(nextGeneration, int(len(nextGeneration)*MUTATION_RATE))
+    for ind in popmut:
+        indmut = individuals.Individuals.mutation(ind)
+        nextGeneration.remove(ind)
+        nextGeneration.append(indmut)
+    
+    #printPopulationStatus(nextGeneration, i)
+    
 printPopulationStatus(populacao, 10)
 
 # https://stackoverflow.com/questions/7152762/how-to-redirect-print-output-to-a-file-using-python

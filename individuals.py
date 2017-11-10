@@ -116,7 +116,7 @@ class Individuals:
                 rL1.remove(r1), rL2.remove(r2)
             newPopList.append( Individuals(ind1.label+ind2.label, None, newInd1) )
             newPopList.append( Individuals(ind2.label+ind1.label, None, newInd2) )
-        if len(popList) == 1: newPopList.append (Individuals.mutation(popList.pop()))
+        #if len(popList) == 1: newPopList.append (Individuals.mutation(popList.pop()))
         return newPopList
         
 		# TODO: COMO SERÁ A MUTAÇÃO? (i) um individuo com uma nova rota ou (ii) uma das rotas do individuo alterada?
