@@ -52,3 +52,32 @@ class Node:
 
     def getRoute(self):
         return self.mRoute
+
+class NodeList:
+    """ Static Class for methods that works on node lists """
+
+    # returns a list of strings of nodes of nodeList
+    @staticmethod
+    def getNodesLabelList(nodeList):
+        nodeLabelList = []
+        for aNode in nodeList:
+            if aNode.getLabel() not in nodeList:
+                nodeLabelList.append(aNode.getLabel())
+        return nodeLabelList
+
+    # returns a lisf of strings of unique nodes of passed lists
+    @staticmethod
+    def getUniqueNodesFromLists(*lists):
+        uniqueNodes = None
+        if lists is not None:
+            lists = lists[0]
+            uniqueNodes = []
+            for aList in lists:
+                if len(uniqueNodes) == 0:
+                    uniqueNodes = NodeList.getNodesLabelList(aList)
+                else:
+                    for aNode in aList:
+                        aNodeLabel = aNode.getLabel()
+                        if not (aNodeLabel in uniqueNodes):
+                            uniqueNodes.append(aNodeLabel)
+        return uniqueNodes

@@ -78,7 +78,7 @@ def plotPopulationEvolution(dataStorage):
     plt.savefig("grafics.png")
     #plt.show()
 
-tamPop = 200 # pode ser alterado direto aqui
+tamPop = 20 # pode ser alterado direto aqui
 populacao = []
 ind = [] #individuo
 routeArray = []
@@ -116,8 +116,8 @@ for i in range(20):
 
     #printPopulationStatus(nextGeneration, i)
 
-printPopulationStatus(populacao, 20)
-printPopulationStatus(nextGeneration, 20)
+#printPopulationStatus(populacao, 20)
+#printPopulationStatus(nextGeneration, 20)
 plotPopulationEvolution(populationData)
 
 print("Done")

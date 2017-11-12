@@ -176,6 +176,10 @@ class RouteGenerator:
                 return True
         return False
 
+    @staticmethod
+    def getAllNodes():
+        return RouteGenerator.Nodes + RouteGenerator.Terminals
+
     # adds a random neighbor to a given route. returns true if
     # succeeds and false otherwise
     @staticmethod

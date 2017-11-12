@@ -10,6 +10,7 @@ Created on Fri Oct 13 19:23:44 2017
 import route
 import random
 import copy
+from node import NodeList as nl
 
 # gera Individuos -> x rotas dentro da USP
 # que passem por todos os seus nos e comece/
@@ -25,6 +26,7 @@ import copy
 class Individuals:
     
     numRoutes = 3 # pode ser alterado direto aqui
+    LACKING_NODE_PENALTY = 5
     
     def __init__ (self, label=None, fitness=None, genes=None):
         self.label = label
@@ -161,14 +163,16 @@ class Individuals:
     
     return newIndividual
     """
+
     # sample method to evaluate fitness
     # returns the simple median of the lenght of individual routes
     def evalFitness(self):
         sumLenght = 0
         for aRoute in self.genes:
             sumLenght += aRoute.evalRouteDistance()
+        sumLenght -= self.getLackingNodes()*Individuals.LACKING_NODE_PENALTY
         return sumLenght/Individuals.numRoutes
-    
+
     # evaluates the In Vehicle Travel time for each OD par
     def evalIVT(self, ODmatrix, transferTime):
         solutionsTime = []
@@ -210,7 +214,21 @@ class Individuals:
                         for solutionNode in commonNodes:
                             solutionsTime.append()
 
-# method that return individual routes that posses interestNode
-def getRoutesWithNode(self, interestNode):
-    # TODO
-    return None
+    # method that return individual routes that posses interestNode
+    def getRoutesWithNode(self, interestNode):
+        # TODO
+        return None
+
+    def getLackingNodes(self):
+        lenAllPossibleNodes = len(route.RouteGenerator.getAllNodes())
+        print lenAllPossibleNodes
+        return lenAllPossibleNodes - len(self.getAllNodes())
+
+    # returns a list of all nodes of this individual, without repetition
+    def getAllNodes(self):
+        mNodes = []
+        mNodesList = []
+        for gene in self.genes:
+            mNodesList.append(gene.getNodes())
+        mNodes = nl.getUniqueNodesFromLists(mNodesList)
+        return mNodes
