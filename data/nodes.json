@@ -5,136 +5,306 @@
 	"terminals": [
 		{
         "id":0,
-        "label":"T1",
+        "label":"T1 - Terminal Butanta",
         "distance":[31, 35],
         "neighbors":["J", "B"] },
 		{
         "id":1,
-        "label":"T2",
+        "label":"T2 - Terminal Cidade Universitaria",
         "distance":[16, 14, 10],
         "neighbors":["R", "E", "Q"] },
 		{
         "id":2,
-        "label":"T3",
+        "label":"T3 - Terminal Veterinaria",
         "distance":[21, 27],
         "neighbors":["W", "O"] }
 	],
     "nodes": [
-      {
+        {
         "id":0,
-        "label":"A",
+        "label":"A0 - Avenida Vital Brasil, 661",
         "distance":[10, 14, 28],
         "neighbors":["B", "J", "T1"]},
-      {
+        {
         "id":1,
-        "label":"B",
+        "label":"B0 - Av. Afranio Peixoto, 332",
         "distance":[18, 18, 17],
         "neighbors":["C", "T1", "Q"] },
         {
         "id":2,
-        "label":"C",
+        "label":"C0 - Academina de Policia",
         "distance":[16, 14],
         "neighbors":["R", "E"] },
         {
         "id":3,
-        "label":"D",
+        "label":"D0 - Educacao Fisica II",
         "distance":[13, 7],
         "neighbors":["Q", "T2"] },
         {
         "id":4,
-        "label":"E",
+        "label":"E0 - Educacao Fisica I",
         "distance":[17],
         "neighbors":["H"] },
         {
         "id":5,
-        "label":"F",
+        "label":"F0 - Acesso CPTM II",
         "distance":[13, 9],
         "neighbors":["D", "R"] },
         {
         "id":6,
-        "label":"G",
+        "label":"G0 - Acesso CPTM I",
         "distance":[8],
         "neighbors":["F"] },
         {
         "id":7,
-        "label":"H",
+        "label":"H0 - Raia Olimpica",
         "distance":[10, 8],
         "neighbors":["I", "K"] },
         {
         "id":8,
-        "label":"I",
+        "label":"I0 - CRUSP II",
         "distance":[6],
         "neighbors":["A"] },
         {
         "id":9,
-        "label":"J",
+        "label":"J0 - Praca do Relogio",
         "distance":[13, 14],
         "neighbors":["G", "K"] },
         {
         "id":10,
-        "label":"K",
+        "label":"Psico II",
         "distance":[13, 17],
         "neighbors":["M", "U"] },
-        {
+         {
         "id":11,
-        "label":"L",
+        "label":"L0 - Portaria 2",
         "distance":[10],
         "neighbors":["I"] },
         {
         "id":12,
-        "label":"M",
+        "label":"M0 - Poli-Mecanica",
         "distance":[12, 25],
         "neighbors":["O", "T3"] },
         {
         "id":13,
-        "label":"N",
+        "label":"N0 - Poli-Metalurgia",
         "distance":[28, 19],
         "neighbors":["T3", "W"] },
         {
-        "id":14,
-        "label":"O",
-        "distance":[12, 16, 8],
-        "neighbors":["D", "E", "T"] },
-        {
         "id":15,
-        "label":"P",
+        "label":"P0 - IPT",
         "distance":[40, 28],
         "neighbors":["T1", "J"] },
         {
         "id":16,
-        "label":"Q",
+        "label":"Q0 - Poli-Eletrotecnica",
         "distance":[12, 16],
         "neighbors":["F", "P"] },
-		 {
+		{
         "id":17,
-        "label":"R",
+        "label":"R0 - Poli-Producao",
         "distance":[16, 9],
         "neighbors":["N", "T"] },
-		 {
+		{
         "id":18,
-        "label":"S",
+        "label":"S0 - FEA",
         "distance":[16, 14, 13],
         "neighbors":["N", "D", "E"] },
-		 {
-        "id":19,
-        "label":"T",
-        "distance":[12, 9],
-        "neighbors":["V", "H"] },
-		 {
+		{
         "id":20,
-        "label":"U",
+        "label":"U0 - FAU II",
         "distance":[10, 14],
         "neighbors":["S", "H"] },
-		 {
+		{
         "id":21,
-        "label":"V",
+        "label":"V0 - Reitoria e Bancos",
         "distance":[12, 13],
         "neighbors":["M", "L"] },
-		 {
+		{
+        "id":21,
+        "label":"W0 - Geociencias",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"X0 - Biblioteca Brasiliana",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"Y0 - Letras",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"Z0 - CRUSP I",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":0,
+        "label":"A1 - Poli-Hidraulica",
+        "distance":[10, 14, 28],
+        "neighbors":["B", "J", "T1"]},
+        {
+        "id":1,
+        "label":"B1 - Psico I",
+        "distance":[18, 18, 17],
+        "neighbors":["C", "T1", "Q"] },
+        {
+        "id":2,
+        "label":"C1 - Centro de Difusao Internacional",
+        "distance":[16, 14],
+        "neighbors":["R", "E"] },
+        {
+        "id":3,
+        "label":"D1 - ECA",
+        "distance":[13, 7],
+        "neighbors":["Q", "T2"] },
+        {
+        "id":4,
+        "label":"E1 - Cultura Japonesa",
+        "distance":[17],
+        "neighbors":["H"] },
+        {
+        "id":5,
+        "label":"F1 - Paco das Artes",
+        "distance":[13, 9],
+        "neighbors":["D", "R"] },
+        {
+        "id":6,
+        "label":"G1 - Educacao",
+        "distance":[8],
+        "neighbors":["F"] },
+        {
+        "id":7,
+        "label":"H1 - Butantan",
+        "distance":[10, 8],
+        "neighbors":["I", "K"] },
+        {
+        "id":8,
+        "label":"I1 - Historia e Geografia",
+        "distance":[6],
+        "neighbors":["A"] },
+        {
+        "id":9,
+        "label":"J1 - Farmacia e Quimica",
+        "distance":[13, 14],
+        "neighbors":["G", "K"] },
+        {
+        "id":10,
+        "label":"K1 - CEPAM",
+        "distance":[13, 17],
+        "neighbors":["M", "U"] },
+        {
+        "id":11,
+        "label":"L1 - Biblioteca Farmacia e Quimica",
+        "distance":[10],
+        "neighbors":["I"] },
+        {
+        "id":12,
+        "label":"M1 - Rua do Lago II",
+        "distance":[12, 25],
+        "neighbors":["O", "T3"] },
+        {
+        "id":13,
+        "label":"N1 - Rua do Lago I",
+        "distance":[28, 19],
+        "neighbors":["T3", "W"] },
+        {
+        "id":15,
+        "label":"P1 - Biologia I",
+        "distance":[40, 28],
+        "neighbors":["T1", "J"] },
+		{
+        "id":17,
+        "label":"R1 - Oceanografico",
+        "distance":[16, 9],
+        "neighbors":["N", "T"] },
+		{
+        "id":18,
+        "label":"S1 - FAU I",
+        "distance":[16, 14, 13],
+        "neighbors":["N", "D", "E"] },
+		{
+        "id":20,
+        "label":"U1 - Fisica",
+        "distance":[10, 14],
+        "neighbors":["S", "H"] },
+		{
+        "id":21,
+        "label":"V1 - IAG",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"W1 - Prefeitura e Fisica II",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"X1 - Prefeitura do Campus da Capital",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"Y1 - MAE",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"Z1 - Acesso a Rio Pequeno",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"A2 - Hospital Universitario I",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"B2 - Hospital Universitario II",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"C2 - Biomedicas",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"D2 - Marinha",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"E2 - Odontologia",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"F2 - Biomedicas II",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"G2 - Acesso Vila Indiana",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
+        "id":21,
+        "label":"H2 - Poli-Civil",
+        "distance":[12, 13],
+        "neighbors":["M", "L"] },
+		{
         "id":22,
-        "label":"W",
+        "label":"I2 - Biologia II",
+        "distance":[16, 8],
+        "neighbors":["U", "L"] },
+		{
+        "id":22,
+        "label":"J2 - Prefeitura e Fisica I",
         "distance":[16, 8],
         "neighbors":["U", "L"] }
-      ]
-  }
+        ]
+    }
 }
