@@ -6,3 +6,6 @@ __pycache__/
 *.py[cod]
 
 *$py.class
+
+# image output. No need to commit that
+graphics.png
