@@ -85,7 +85,7 @@
 		"latlong":[-23.55525, -46.72400] },
         {
         "id":13,
-        "label":"Psico II",
+        "label":"K0 - Psico II",
         "distance":[400, 450, 640],
         "neighbors":[12, 27, 14],
 		"latlong":[-23.55461, -46.72444] },
@@ -356,8 +356,8 @@
 		{
         "id":59,
         "label":"I2 - Biologia II",
-        "distance":[16],
-        "neighbors":[745],
+        "distance":[745],
+        "neighbors":[44],
 		"latlong":[-23.56614, -46.73013] },
 		{
         "id":60,
