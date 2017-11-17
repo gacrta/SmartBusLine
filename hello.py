@@ -73,7 +73,7 @@ def plotPopulationEvolution(dataStorage):
     plt.xlabel("Iterations")
     plt.ylabel("Distance (m)")
     plt.title("Best Individual evolution")
-    plt.legend(["Mean", "Max"])
+    plt.legend(["Max", "Mean"])
     plt.grid()
     plt.savefig("grafics.png")
     #plt.show()

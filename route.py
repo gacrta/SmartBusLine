@@ -52,6 +52,12 @@ class Route:
             if nodeLabel == aNode.getLabel():
                 return aNode
 
+    # finds a node at this route's nodes list by idx
+    def getNodeById(self, nodeId):
+        for aNode in self.nodes:
+            if nodeId == aNode.getIdx():
+                return aNode
+
     # returns the lengh of nodes list
     def getNumberOfNodes(self):
         return len(self.nodes)
@@ -87,8 +93,8 @@ class Route:
     # removes and invalidates last node
     def denyLastNode(self):
         invalidNode = self.removeLastNode()
-        invalidNodeLabel = invalidNode.getLabel()
-        self.denyInvalidNode(invalidNodeLabel)
+        invalidNodeIdx = invalidNode.getIdx()
+        self.denyInvalidNode(invalidNodeIdx)
         print ("Node " + invalidNode.getLabel() + " in invalid for route " + self.getLabel())
 
     # returns true if route is terminal ended
@@ -110,7 +116,7 @@ class Route:
         lastNode = self.getLastNode()
         neighborhood = lastNode.getNeighbors()
         for neighbor in neighborhood:
-            neighborNode = self.getNodeByLabel(neighbor)
+            neighborNode = self.getNodeById(neighbor)
             # denys existing inner nodes and invalid ones, but adds a terminal neighbor
             if (((neighborNode is None) or
                  (RouteGenerator.isNodeOnList(neighborNode,
@@ -137,7 +143,7 @@ class Route:
     def isEqualToRoute(self, otherRoute):
         # TODO
         return False
-    
+
     def getNodes(self):
         return self.nodes
 
@@ -149,6 +155,7 @@ class Route:
         rClone.length = self.length
         rClone.string = self.string
         return rClone
+
 
 class RouteGenerator:
     """ Static class used to create Route objects """
@@ -168,11 +175,19 @@ class RouteGenerator:
             if aNode.getLabel() == nodeLabel:
                 return aNode
 
+    # static method that finds a node at data bank by idx
+    @staticmethod
+    def findNodeById(nodeId):
+        allNodes = RouteGenerator.Nodes + RouteGenerator.Terminals # concatenates the 2 lists
+        for aNode in allNodes:
+            if aNode.getIdx() == nodeId:
+                return aNode
+
     # returns true if a interest node is in a interest list of nodes
     @staticmethod
     def isNodeOnList(interestNode, interestList):
         for aNode in interestList:
-            if aNode.getLabel() == interestNode.getLabel():
+            if aNode.getIdx() == interestNode.getIdx():
                 return True
         return False
 
@@ -189,9 +204,9 @@ class RouteGenerator:
             # picks a random neighbor label from last node
             key = random.choice(neighborList)
             # finds node from database
-            node = RouteGenerator.findNodeByLabel(key)
-            aRoute.addNode(node)
-            print ("Node " + node.getLabel() + " added to route " + aRoute.getLabel())
+            aNode = RouteGenerator.findNodeById(key)
+            aRoute.addNode(aNode)
+            print ("Node " + aNode.getLabel() + " added to route " + aRoute.getLabel())
             return True
         else:
             # len(neighborList) == 0, no more valid neighbors

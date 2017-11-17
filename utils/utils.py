@@ -21,13 +21,15 @@ def parseJsonString(jsonString):
         nodes.append(node.Node(jsonNode['id'],
                                jsonNode['label'],
                                jsonNode['neighbors'],
-                               jsonNode['distance']))
+                               jsonNode['distance'],
+                               jsonNode['latlong']))
 
     for jsonNode in jsonStruct['network']['terminals']:
         terminals.append(node.Node(jsonNode['id'],
                                    jsonNode['label'],
                                    jsonNode['neighbors'],
-                                   jsonNode['distance']))
+                                   jsonNode['distance'],
+                                   jsonNode['latlong']))
     return [nodes, terminals]
 
 

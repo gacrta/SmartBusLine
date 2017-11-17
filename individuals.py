@@ -182,9 +182,9 @@ class Individuals:
                     if i != j:
                         # for each node pair of OD matrix, find [Ro] and [Rd]
                         # important: the OD matrix must be ordered equally to allNodes list
-                        originNode = route.RouteGenerator.findNodeByLabel(i)
+                        originNode = route.RouteGenerator.findNodeById(i)
                         originRoutes = self.getRoutesWithNode(originNode)
-                        destinationNode = route.RouteGenerator.findNodeByLabel(j)
+                        destinationNode = route.RouteGenerator.findNodeById(j)
                         destinationRoutes = self.getRoutesWithNode(destinationNode)
     
                         lenghtOR = len(originRoutes)
