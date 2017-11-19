@@ -186,42 +186,57 @@ class Individuals:
                         originRoutes = self.getRoutesWithNode(originNode)
                         destinationNode = route.RouteGenerator.findNodeById(j)
                         destinationRoutes = self.getRoutesWithNode(destinationNode)
-    
+
                         lenghtOR = len(originRoutes)
                         lenghtDR = len(destinationRoutes)
-                        # if individual is not guaranteed to have all nodes, the demand
-                        # could be unattended
+                        # if individual is not guaranteed to have all nodes,
+                        # the demand could be unattended
                         if lenghtOR == 0 or lenghtDR == 0:
-                            return -1
-    
-                        # searches for common routes between [Ro] and [Rd]
-                        commonRoutes = route.RouteList.getCommonListElements(originRoutes, destinationRoutes)
-                        for solutionRoute in commonRoutes:
-                            solutionsTime.append(solutionRoute.evalRouteDistance())
-    
-                        # if a common route is found, return the smallest time
-                        if len(solutionsTime) != 0:
-                            return min(solutionsTime)
-    
-                        # otherwise, search for common nodes between each element of [Ro] and [Rd]
-                        commonNodes = route.RouteList.getCommonNodes(originNode, destinationNode)
-                        for nodeList in commonNodes:
-                            for aNode in nodeList:
-                                # Todo - Finish common nodes
-                                return None
-    
-                        # if there are common nodes, get all possible times
-                        for solutionNode in commonNodes:
-                            solutionsTime.append()
+                            travelTime = -1
+                        else:
+                            travelTime = self.getTravelTime(i, originRoutes, j, destinationRoutes, transferTime)
+
+                        solutionsTime.append([ODmatrix[i][j], travelTime])
+
+        return self.evalFitness(solutionsTime)
+
+    def getTravelTime(self, originNode, originRoutes,
+                      detinationNode, destinationRoutes, transferTime):
+
+        solutions = []  # list that contains solutions
+
+        # searches for common routes between [Ro] and [Rd]
+        commonRoutes = route.RouteList.getCommonListElements(originRoutes, destinationRoutes)
+        if len(commonRoutes) != 0:
+            for solutionRoute in commonRoutes:
+                solutions.append(solutionRoute.evalRouteTime(originNode, detinationNode))
+            return min(solutions)
+
+        # otherwise, search for common nodes between each element of [Ro] and [Rd]
+        for originRoute in originRoutes:
+            for destinationRoute in destinationRoutes:
+                commonNodes = originRoute.getCommonNodes(destinationRoutes)
+                for transferNode in commonNodes:
+                    solutions.append(evalTransitTimeWithTransfer(transferNode, originRoute, destinationRoute))
+
+        # if a transfer node is found, return the smallest time
+        if len(solutions) != 0:
+            return min(solutions)
+
+        # else, the demand is unattended
+        return -1
 
     # method that return individual routes that posses interestNode
     def getRoutesWithNode(self, interestNode):
-        # TODO
-        return None
+        mRoutesWithNode = []
+        for aRoute in self.genes:
+            if (aRoute.getNodeById(interestNode.getIdx()) != None):
+                mRoutesWithNode.append(aRoute)
+        return mRoutesWithNode
 
     def getLackingNodes(self):
         lenAllPossibleNodes = len(route.RouteGenerator.getAllNodes())
-        print lenAllPossibleNodes
+        print(lenAllPossibleNodes)
         return lenAllPossibleNodes - len(self.getAllNodes())
 
     # returns a list of all nodes of this individual, without repetition

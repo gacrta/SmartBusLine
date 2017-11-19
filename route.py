@@ -156,6 +156,10 @@ class Route:
         rClone.string = self.string
         return rClone
 
+    def evalRouteTime(self, initialNode, endNode):
+        # TODO
+        return None
+
 
 class RouteGenerator:
     """ Static class used to create Route objects """
