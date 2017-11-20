@@ -125,3 +125,31 @@ print("Done")
 # https://stackoverflow.com/questions/7152762/how-to-redirect-print-output-to-a-file-using-python
 # http://www.pythonforbeginners.com/files/reading-and-writing-files-in-python
 # with open("exittest", "w")
+
+
+
+# parte para print da saída do programa num arquivo csv, para ser usado em GTFS
+"""
+def printGTFS (generation):
+#TODO
+
+# to write a csv file
+# https://docs.python.org/2/library/csv.html
+
+# to create a GTFS format 
+# https://developers.google.com/transit/gtfs/examples/gtfs-feed?hl=pt-br
+    
+    # minimum files to create a shapefile in gis (like tutorial below)
+    # (http://www.stevencanplan.com/2016/02/converting-a-transit-agencys-gtfs-to-shapefile-and-geojson-with-qgis/)
+    
+    # create a file stops.txt (save bus stops and its infos)
+    # must have points_ID, points_lat, points_lon at least
+
+    # create a file shapes.txt (save bus lines and its infos)
+    # must have points_ID, points_lat, points_lon at least
+
+def printShapefile(generation):
+#TODO
+# https://glenbambrick.com/2016/01/09/csv-to-shapefile-with-pyshp/
+
+"""
