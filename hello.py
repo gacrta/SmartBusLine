@@ -133,6 +133,7 @@ print("Done")
 # leitura e escrita em Python:
 # http://www.pitt.edu/~naraehan/python2/reading_writing_methods.html
 
+import route.RouteGenerator as rg
 def printGTFS (generation):
 #TODO
 
@@ -151,15 +152,14 @@ def printGTFS (generation):
 
     stops = open('stops.txt', 'w')
     stops.write("stop_id,stop_name,stop_desc,stop_lat,stop_lon,stop_url,location_type,parent_station\n")
-    for ind in generation:
-        for route in ind:
-            for node in route:
-                id = node.getIdx()
-                name = node.getLabel()
-                latlon = node.getLatLon()
-                ...
-                string=(str(id)+","+name+","+str(latlon[0])+","+latlon[1]+"\n")
-                stops.writelines(string)
+    allNodes = rg.getAllNodes()
+    for node in allNodes:
+        id = node.getIdx()
+        name = node.getLabel()
+        latlon = node.getLatLon()
+        ...
+        string=(str(id)+","+name+","+str(latlon[0])+","+latlon[1]+"\n")
+        stops.writelines(string)
     stops.close()
 
     # create a file shapes.txt (save bus lines and its infos)
