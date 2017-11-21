@@ -130,6 +130,9 @@ print("Done")
 
 # parte para print da saída do programa num arquivo csv, para ser usado em GTFS
 """
+# leitura e escrita em Python:
+# http://www.pitt.edu/~naraehan/python2/reading_writing_methods.html
+
 def printGTFS (generation):
 #TODO
 
@@ -145,8 +148,34 @@ def printGTFS (generation):
     # create a file stops.txt (save bus stops and its infos)
     # must have points_ID, points_lat, points_lon at least
 
+
+    stops = open('stops.txt', 'w')
+    stops.write("stop_id,stop_name,stop_desc,stop_lat,stop_lon,stop_url,location_type,parent_station\n")
+    for ind in generation:
+        for route in ind:
+            for node in route:
+                id = node.getIdx()
+                name = node.getLabel()
+                latlon = node.getLatLon()
+                ...
+                string=(str(id)+","+name+","+str(latlon[0])+","+latlon[1]+"\n")
+                stops.writelines(string)
+    stops.close()
+
     # create a file shapes.txt (save bus lines and its infos)
     # must have points_ID, points_lat, points_lon at least
+    
+    shapes = open('shapes.txt', 'w')
+    shapes.write("shape_id,shape_pt_lat,shape_pt_lon,shape_pt_sequence,shape_dist_traveled\n")
+    for ind in generation:
+        for route in ind:
+            for node in route:
+                id = node.getIdx()
+                latlon = node.getLatLon()
+                ...
+                string=(str(id)+","+str(latlon[0])+","+latlon[1]+"\n")
+                stops.writelines(string)    
+    shapes.close()    
 
 def printShapefile(generation):
 #TODO
