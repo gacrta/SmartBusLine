@@ -4,13 +4,15 @@
 class Node:
 
     def __init__(self, idx=0, label="",
-                 neighbors=[], distance=[]):
+                 neighbors=[], distance=[],
+                 latlong=[]):
         self.idx = idx
         self.label = label
         self.neighbors = {}
         size = len(distance)
         for i in range(size):
             self.neighbors.update({neighbors[i]: distance[i]})
+        self.latlong = latlong
         self.mRoute = None
 
     def __str__(self):
@@ -28,10 +30,13 @@ class Node:
     def getNeighbors(self):
         return list(self.neighbors.keys())
 
+    def getLatLong(self):
+        return self.latlong
+
     def getDistanceOfNode(self, aNode):
-        if aNode.getLabel() in self.getNeighbors():
-            dist = self.neighbors[aNode.getLabel()]
-        elif aNode.getLabel() == self.getLabel():
+        if aNode.getIdx() in self.getNeighbors():
+            dist = self.neighbors[aNode.getIdx()]
+        elif aNode.getIdx() == self.getIdx():
             dist = 0
         else:
             dist = -1
@@ -43,6 +48,7 @@ class Node:
         mClone.label = self.label
         mClone.idx = self.idx
         mClone.neighbors = self.neighbors
+        mClone.latlong = self.latlong
         mClone.mRoute = self.mRoute
         return mClone
 
@@ -52,3 +58,32 @@ class Node:
 
     def getRoute(self):
         return self.mRoute
+
+class NodeList:
+    """ Static Class for methods that works on node lists """
+
+    # returns a list of strings of nodes of nodeList
+    @staticmethod
+    def getNodesLabelList(nodeList):
+        nodeLabelList = []
+        for aNode in nodeList:
+            if aNode.getLabel() not in nodeList:
+                nodeLabelList.append(aNode.getLabel())
+        return nodeLabelList
+
+    # returns a lisf of strings of unique nodes of passed lists
+    @staticmethod
+    def getUniqueNodesFromLists(*lists):
+        uniqueNodes = None
+        if lists is not None:
+            lists = lists[0]
+            uniqueNodes = []
+            for aList in lists:
+                if len(uniqueNodes) == 0:
+                    uniqueNodes = NodeList.getNodesLabelList(aList)
+                else:
+                    for aNode in aList:
+                        aNodeLabel = aNode.getLabel()
+                        if not (aNodeLabel in uniqueNodes):
+                            uniqueNodes.append(aNodeLabel)
+        return uniqueNodes
