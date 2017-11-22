@@ -129,7 +129,7 @@ print("Done")
 
 
 # parte para print da saída do programa num arquivo csv, para ser usado em GTFS
-"""
+
 # leitura e escrita em Python:
 # http://www.pitt.edu/~naraehan/python2/reading_writing_methods.html
 
@@ -150,7 +150,7 @@ def printGTFS (generation):
     # create a file stops.txt (save bus stops and its infos)
     # must have points_ID, points_lat, points_lon at least
 
-    allNodes = route.RouteGenerator.Terminals + route.RouteGenerator.Nodes
+    allNodes = rg.Terminals + rg.Nodes
     stops = open("stops.txt","w")
     stops.write("stop_id;stop_name;stop_desc;stop_lat;stop_lon;stop_url;location_type;parent_station\n")
     for node in allNodes:
@@ -168,19 +168,18 @@ def printGTFS (generation):
         routeList = individual.getGenes()
         for rt in routeList:
             nodeList = rt.getNodes()
-            routeIndex++
-            nodeSeq = 0
-            distAcc = 0
-            lastNode = ""
-            for node in nodeList:
-                if (i != 0): distAcc = node.getDistanceOfNode(lastNode)
-                latlon = node.getLatLon()
-                nodeSeq++
+            routeIndex+=1
+            nodeSeq, distAcc = 0, 0
+            lastNode=""
+            for i, node in enumerate(nodeList):
+                if (i != 0): distAcc = lastNode.getDistanceOfNode(node)
+                latlon = node.getLatLong()
+                nodeSeq+=1
                 string=(str(routeIndex)+";"+str(latlon[0])+";"+str(latlon[1])+";"+str(nodeSeq)+";"+str(distAcc)+"\n")
                 lastNode = node
-                stops.writelines(string)    
+                shapes.writelines(string)    
     shapes.close()
-
+"""
 def printShapefile(generation):
 #TODO
 # https://glenbambrick.com/2016/01/09/csv-to-shapefile-with-pyshp/
