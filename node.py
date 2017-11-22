@@ -61,6 +61,7 @@ class Node:
     def getRoute(self):
         return self.mRoute
 
+
 class NodeList:
     """ Static Class for methods that works on node lists """
 

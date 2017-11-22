@@ -173,8 +173,8 @@ class Individuals:
         sumLenght -= self.getLackingNodes()*Individuals.LACKING_NODE_PENALTY
         return sumLenght/Individuals.numRoutes
 
-    # evaluates the In Vehicle Travel time for each OD par
-    def evalIVT(self, ODmatrix, transferTime):
+    # evaluates the In Vehicle Travel time for each OD pair
+    def evalIVT(self, ODmatrix, transferTime, averageSpeed):
         solutionsTime = []
         for line in ODmatrix:
             for i in line:
@@ -194,30 +194,40 @@ class Individuals:
                         if lenghtOR == 0 or lenghtDR == 0:
                             travelTime = -1
                         else:
-                            travelTime = self.getTravelTime(i, originRoutes, j, destinationRoutes, transferTime)
+                            travelTime = self.getTravelTime(i,
+                                                            originRoutes,
+                                                            j,
+                                                            destinationRoutes,
+                                                            transferTime,
+                                                            averageSpeed)
 
                         solutionsTime.append([ODmatrix[i][j], travelTime])
 
         return self.evalFitness(solutionsTime)
 
     def getTravelTime(self, originNode, originRoutes,
-                      detinationNode, destinationRoutes, transferTime):
+                      destinationNode, destinationRoutes,
+                      transferTime, averageSpeed):
 
         solutions = []  # list that contains solutions
 
         # searches for common routes between [Ro] and [Rd]
-        commonRoutes = route.RouteList.getCommonListElements(originRoutes, destinationRoutes)
+        commonRoutes = route.RouteList.getCommonListElements(originRoutes,
+                                                             destinationRoutes)
         if len(commonRoutes) != 0:
             for solutionRoute in commonRoutes:
-                solutions.append(solutionRoute.evalRouteTime(originNode, detinationNode))
+                solutions.append(solutionRoute.evalRouteTime(originNode,
+                                                             destinationNode,
+                                                             averageSpeed))
             return min(solutions)
 
-        # otherwise, search for common nodes between each element of [Ro] and [Rd]
+        # otherwise, search for common nodes between each element of [Ro]
+        # and [Rd]
         for originRoute in originRoutes:
             for destinationRoute in destinationRoutes:
                 commonNodes = originRoute.getCommonNodes(destinationRoutes)
                 for transferNode in commonNodes:
-                    solutions.append(evalTransitTimeWithTransfer(transferNode, originRoute, destinationRoute))
+                    solutions.append(self.evalTransitTimeWithTransfer(transferNode, originNode, originRoute, destinationNode, destinationRoute))
 
         # if a transfer node is found, return the smallest time
         if len(solutions) != 0:
@@ -230,7 +240,7 @@ class Individuals:
     def getRoutesWithNode(self, interestNode):
         mRoutesWithNode = []
         for aRoute in self.genes:
-            if (aRoute.getNodeById(interestNode.getIdx()) != None):
+            if (aRoute.getNodeById(interestNode.getIdx()) is not None):
                 mRoutesWithNode.append(aRoute)
         return mRoutesWithNode
 
@@ -247,3 +257,17 @@ class Individuals:
             mNodesList.append(gene.getNodes())
         mNodes = nl.getUniqueNodesFromLists(mNodesList)
         return mNodes
+
+    # eval transit time with one transfer
+    def evalTransitTimeWithTransfer(self, transferNode, transferTime,
+                                    originNode, originRoute, destinationNode,
+                                    destinationRoute, averageSpeed):
+
+        time1 = originRoute.evalRouteTime(originNode,
+                                          transferNode, averageSpeed)
+        time2 = destinationRoute.evalRouteTime(transferNode,
+                                               destinationNode, averageSpeed)
+
+        if time1 is not None and time1 is not None:
+            return time1+time2+transferTime
+        return None

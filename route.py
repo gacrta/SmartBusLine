@@ -15,7 +15,7 @@ class Route:
             self.nodes = []
         else:
             self.nodes = nodes
-        # array of nodes that results on non terminal ending route 
+        # array of nodes that results on non terminal ending route
         if deniedNodes is None:
             self.invalid = []
         else:
@@ -36,7 +36,7 @@ class Route:
             mNode = newNode.cloneNode()
             mNode.setRoute(self)
             self.nodes.append(mNode)
-            #self.nodes.append(newNode)
+            # self.nodes.append(newNode)
         else:
             raise TypeError("The object " + str(type(newNode)) +
                             " is not of type " + str(type(node.Node())))
@@ -68,18 +68,35 @@ class Route:
     def getLenght(self):
         return self.length
 
-    def evalRouteDistance(self):
-        if self.length == None:
-            cDistance = 0
-            if len(self.nodes) != 0:
-                cNode = self.nodes[0]
-                for nextNode in self.nodes[1:]:
-                    cDistance += cNode.getDistanceOfNode(nextNode)
-                    cNode = nextNode
-                self.length = cDistance
-            else:
-                self.length = 0
-        return self.length
+    def setLenght(self, length):
+        self.length = length
+
+    def evalRouteDistance(self, startNodeIdx=None, endNodeIdx=None):
+        if len(self.nodes) == 0:
+            return 0
+        elif startNodeIdx is None:
+            remainingNodes = self.nodes
+        elif endNodeIdx is None:
+            startNode = self.getNodeById(startNodeIdx)
+            remainingNodes = self.nodes[startNode:]
+        else:
+            startNode = self.getNodeById(startNodeIdx)
+            endNode = self.getNodeById(endNodeIdx)
+            remainingNodes = self.nodes[startNode:endNode]
+        cDistance = 0
+        cNode = remainingNodes[0]
+        for nextNode in remainingNodes[1:]:
+            cDistance += cNode.getDistanceOfNode(nextNode)
+            cNode = nextNode
+        return cDistance
+
+    # evaluates route time from startNode to endNode
+    def evalRouteTime(self, startNode, endNode, averageSpeed):
+        distance = self.evalRouteDistance(startNode, endNode)
+
+        if distance is not None:
+            return averageSpeed*distance
+        return None
 
     # remove the last node and returns it
     def removeLastNode(self):
@@ -156,10 +173,6 @@ class Route:
         rClone.string = self.string
         return rClone
 
-    def evalRouteTime(self, initialNode, endNode):
-        # TODO
-        return None
-
 
 class RouteGenerator:
     """ Static class used to create Route objects """
@@ -174,7 +187,8 @@ class RouteGenerator:
     # static method that finds a node at data bank
     @staticmethod
     def findNodeByLabel(nodeLabel):
-        allNodes = RouteGenerator.Nodes + RouteGenerator.Terminals # concatenates the 2 lists
+        # concatenates the 2 lists
+        allNodes = RouteGenerator.Nodes + RouteGenerator.Terminals
         for aNode in allNodes:
             if aNode.getLabel() == nodeLabel:
                 return aNode
@@ -182,7 +196,8 @@ class RouteGenerator:
     # static method that finds a node at data bank by idx
     @staticmethod
     def findNodeById(nodeId):
-        allNodes = RouteGenerator.Nodes + RouteGenerator.Terminals # concatenates the 2 lists
+        # concatenates the 2 lists
+        allNodes = RouteGenerator.Nodes + RouteGenerator.Terminals
         for aNode in allNodes:
             if aNode.getIdx() == nodeId:
                 return aNode
@@ -251,14 +266,15 @@ class RouteGenerator:
         routeDone = False
         newRoute = None
         while not routeDone:
-            if newRoute != None:
+            if newRoute is not None:
                 print("An invalid route was created and abbandoned.")
                 del(newRoute)
             newRoute = Route(label)
             routeDone = RouteGenerator.startRandomRouteFromTerminal(newRoute)
         print ("Route " + label + " is VALID.")
-        newRoute.evalRouteDistance()
+        newRoute.setLenght(newRoute.evalRouteDistance())
         return newRoute
+
 
 class RouteList:
     """ Static class used handle lists of routes """
