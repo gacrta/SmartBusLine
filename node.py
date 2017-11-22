@@ -36,10 +36,12 @@ class Node:
     def getDistanceOfNode(self, aNode):
         if aNode.getIdx() in self.getNeighbors():
             dist = self.neighbors[aNode.getIdx()]
-        elif aNode.getIdx() == self.getIdx():
-            dist = 0
         else:
-            dist = -1
+            dist = 0
+        #elif aNode.getIdx() == self.getIdx():
+        #    dist = 0
+        #else:
+        #    dist = -1
         return dist
 
     # returns a clone of this node

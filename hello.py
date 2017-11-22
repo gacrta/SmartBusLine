@@ -142,6 +142,7 @@ def printGTFS (generation):
 
 # to create a GTFS format 
 # https://developers.google.com/transit/gtfs/examples/gtfs-feed?hl=pt-br
+# http://gtfs.org/best-practices/
     
     # minimum files to create a shapefile in gis (like tutorial below)
     # (http://www.stevencanplan.com/2016/02/converting-a-transit-agencys-gtfs-to-shapefile-and-geojson-with-qgis/)
@@ -149,33 +150,36 @@ def printGTFS (generation):
     # create a file stops.txt (save bus stops and its infos)
     # must have points_ID, points_lat, points_lon at least
 
-
-    stops = open('stops.txt', 'w')
-    stops.write("stop_id,stop_name,stop_desc,stop_lat,stop_lon,stop_url,location_type,parent_station\n")
-    allNodes = rg.getAllNodes()
+    allNodes = route.RouteGenerator.Terminals + route.RouteGenerator.Nodes
+    stops = open("stops.txt","w")
+    stops.write("stop_id;stop_name;stop_desc;stop_lat;stop_lon;stop_url;location_type;parent_station\n")
     for node in allNodes:
-        id = node.getIdx()
-        name = node.getLabel()
-        latlon = node.getLatLon()
-        ...
-        string=(str(id)+","+name+","+str(latlon[0])+","+latlon[1]+"\n")
+        id, name, latlon = node.getIdx(), node.getLabel(), node.getLatLong()
+        string = (str(id)+";"+name+";"+";"+str(latlon[0])+";"+str(latlon[1])+";"+";"+";"+"\n")
         stops.writelines(string)
     stops.close()
 
     # create a file shapes.txt (save bus lines and its infos)
     # must have points_ID, points_lat, points_lon at least
-    
+    routeIndex = 0
     shapes = open('shapes.txt', 'w')
-    shapes.write("shape_id,shape_pt_lat,shape_pt_lon,shape_pt_sequence,shape_dist_traveled\n")
-    for ind in generation:
-        for route in ind:
-            for node in route:
-                id = node.getIdx()
+    shapes.write("shape_id;shape_pt_lat;shape_pt_lon;shape_pt_sequence;shape_dist_traveled\n")
+    for individual in generation:
+        routeList = individual.getGenes()
+        for rt in routeList:
+            nodeList = rt.getNodes()
+            routeIndex++
+            nodeSeq = 0
+            distAcc = 0
+            lastNode = ""
+            for node in nodeList:
+                if (i != 0): distAcc = node.getDistanceOfNode(lastNode)
                 latlon = node.getLatLon()
-                ...
-                string=(str(id)+","+str(latlon[0])+","+latlon[1]+"\n")
+                nodeSeq++
+                string=(str(routeIndex)+";"+str(latlon[0])+";"+str(latlon[1])+";"+str(nodeSeq)+";"+str(distAcc)+"\n")
+                lastNode = node
                 stops.writelines(string)    
-    shapes.close()    
+    shapes.close()
 
 def printShapefile(generation):
 #TODO
