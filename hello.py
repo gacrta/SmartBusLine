@@ -6,11 +6,8 @@ Created on Tue Sep 12 19:24:38 2017
 """
 
 import individuals
-import operator
-import random
-import numpy
+import operator, random, numpy, copy
 import matplotlib.pyplot as plt
-import copy
 
 MUTATION_RATE = 0.05
 
@@ -159,8 +156,10 @@ def printGTFS (generation):
         stops.writelines(string)
     stops.close()
 
+    
     # create a file shapes.txt (save bus lines and its infos)
     # must have points_ID, points_lat, points_lon at least
+    
     routeIndex = 0
     shapes = open('shapes.txt', 'w')
     shapes.write("shape_id;shape_pt_lat;shape_pt_lon;shape_pt_sequence;shape_dist_traveled\n")
@@ -180,8 +179,9 @@ def printGTFS (generation):
                 shapes.writelines(string)    
     shapes.close()
 """
+# https://glenbambrick.com/2016/01/09/csv-to-shapefile-with-pyshp/
 def printShapefile(generation):
 #TODO
-# https://glenbambrick.com/2016/01/09/csv-to-shapefile-with-pyshp/
+
 
 """
