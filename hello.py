@@ -13,12 +13,15 @@ import matplotlib.pyplot as plt
 import copy
 
 MUTATION_RATE = 0.05
+AVERAGE_SPEED = 96.3  # m/s = 26 km/h * 3.6
+TRANSFER_TIME = 10  # minutes
+
 
 def printPopulationStatus(pop, iteration):
     print("Population Status for " + str(iteration) + " iteration:")
     for ind in pop:
         #print ("Individual " + ind.getLabel() + ": " + str(ind.evalFitness()))
-        msg = "Individual %(indLabel)s: %(fitness).2f"%{"indLabel":ind.getLabel(),"fitness":ind.evalFitness()}
+        msg = "Individual %(indLabel)s: %(fitness).2f"%{"indLabel":ind.getLabel(),"fitness":ind.fitness()}
         print (msg)
 
 def populationSort(pop):
@@ -64,10 +67,10 @@ def storePopulationData(dataStorage, population, iteration):
 
 def plotPopulationEvolution(dataStorage):
     dataArray = numpy.array(dataStorage)
-    iterations = dataArray[:,0]
-    popMax = dataArray[:,1]
-    popMean = dataArray[:,2]
-    popStd = dataArray[:,3]
+    iterations = dataArray[:, 0]
+    popMax = dataArray[:, 1]
+    popMean = dataArray[:, 2]
+    popStd = dataArray[:, 3]
     plt.errorbar(iterations, popMean, yerr=popStd)
     plt.plot(iterations, popMax)
     plt.xlabel("Iterations")
@@ -78,15 +81,25 @@ def plotPopulationEvolution(dataStorage):
     plt.savefig("grafics.png")
     #plt.show()
 
-tamPop = 20 # pode ser alterado direto aqui
+tamPop = 20  # pode ser alterado direto aqui
 populacao = []
-ind = [] #individuo
+ind = []  # individuo
 routeArray = []
+
+# sample OD matrix
+# start, end, demand
+od_data = [[0, 25, 200],
+           [9, 18, 30],
+           [0, 18, 50],
+           [0, 19, 30],
+           [0, 35, 45],
+           [0, 36, 60]]
 
 # cria uma populacao
 for i in range(tamPop):
     ind = individuals.Individuals(str(i))
-    ind.printIndividual()
+    #ind.printIndividual()
+    ind.evalIVT(od_data, TRANSFER_TIME, AVERAGE_SPEED)
     populacao.append(ind)
 
 nextGeneration = copy.copy(populacao)

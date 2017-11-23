@@ -78,25 +78,33 @@ class Route:
             remainingNodes = self.nodes
         elif endNodeIdx is None:
             startNode = self.getNodeById(startNodeIdx)
-            remainingNodes = self.nodes[startNode:]
+            startNodeInnerId = self.nodes.index(startNode)
+            remainingNodes = self.nodes[startNodeInnerId:]
+            print startNodeInnerId
         else:
             startNode = self.getNodeById(startNodeIdx)
+            startNodeInnerId = self.nodes.index(startNode)
             endNode = self.getNodeById(endNodeIdx)
-            remainingNodes = self.nodes[startNode:endNode]
+            endNodeInnerId = self.nodes.index(endNode)
+            remainingNodes = self.nodes[startNodeInnerId:endNodeInnerId+1]
+            print startNodeInnerId, endNodeInnerId
+        print (remainingNodes)
         cDistance = 0
-        cNode = remainingNodes[0]
-        for nextNode in remainingNodes[1:]:
-            cDistance += cNode.getDistanceOfNode(nextNode)
-            cNode = nextNode
+        if len(remainingNodes)>0:
+            cNode = remainingNodes[0]
+            for nextNode in remainingNodes[1:]:
+                cDistance += cNode.getDistanceOfNode(nextNode)
+                cNode = nextNode
         return cDistance
 
     # evaluates route time from startNode to endNode
     def evalRouteTime(self, startNode, endNode, averageSpeed):
         distance = self.evalRouteDistance(startNode, endNode)
 
-        if distance is not None:
-            return averageSpeed*distance
-        return None
+        if distance is not 0:
+            # returns time in minutes
+            return distance/(60*averageSpeed)
+        return 0
 
     # remove the last node and returns it
     def removeLastNode(self):
@@ -144,7 +152,7 @@ class Route:
 
     # returns a string of route nodes
     def getString(self):
-        if self.string == None:
+        if self.string is None:
             routeString = ""
             for aNode in self.nodes:
                 routeString += aNode.getLabel()
@@ -153,8 +161,12 @@ class Route:
 
     # returns a list of nodes that this has with otherRoute
     def getCommonNodes(self, otherRoute):
-        # TODO
-        return None
+        commonNodes = []
+        for mNode in self.nodes:
+            mNodeIdx = mNode.getIdx()
+            if otherRoute.getNodeById(mNodeIdx) is not None:
+                commonNodes.append(mNodeIdx)
+        return commonNodes
 
     # returns true if this route is equal to otherRoute
     def isEqualToRoute(self, otherRoute):
@@ -177,7 +189,7 @@ class Route:
 class RouteGenerator:
     """ Static class used to create Route objects """
 
-    MAX_NUMBER_OF_NODES = 15
+    MAX_NUMBER_OF_NODES = 25
     ONLY_TERMINAL_ENDING = True
 
     jsonString = utils.readNodesJsonFile()
