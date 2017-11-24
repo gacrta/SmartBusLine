@@ -224,7 +224,7 @@ class RouteGenerator:
 
     @staticmethod
     def getAllNodes():
-        return RouteGenerator.Nodes + RouteGenerator.Terminals
+        return RouteGenerator.Terminals + RouteGenerator.Nodes
 
     # adds a random neighbor to a given route. returns true if
     # succeeds and false otherwise
@@ -286,6 +286,34 @@ class RouteGenerator:
         print ("Route " + label + " is VALID.")
         newRoute.setLenght(newRoute.evalRouteDistance())
         return newRoute
+
+    # method that returns the minimum path matrix
+    @staticmethod
+    def getFloydMinimumPath():
+        allNodes = RouteGenerator.getAllNodes()
+        inf = 100000  # value bigger than any distance
+
+        # init matrix with all neighbors distance
+        minDistMatrix = []
+        for rowNode in allNodes:
+            line = []
+            for columnNode in allNodes:
+                dist = rowNode.getDistanceOfNode(columnNode)
+                # if dist = -1, the nodes are not neighbors
+                if dist == -1:
+                    dist = inf
+                line.append(dist)
+            minDistMatrix.append(line)
+
+        # evaluate floyd minimum path
+        N = len(allNodes)
+        for k in range(N):
+            for i in range(N):
+                for j in range(N):
+                    innerDist = minDistMatrix[i][k]+minDistMatrix[k][j]
+                    if minDistMatrix[i][j] > innerDist:
+                        minDistMatrix[i][j] = innerDist
+        return minDistMatrix
 
 
 class RouteList:
