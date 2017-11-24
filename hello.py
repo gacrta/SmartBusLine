@@ -119,69 +119,23 @@ plotPopulationEvolution(populationData)
 
 print("Done")
 
-# https://stackoverflow.com/questions/7152762/how-to-redirect-print-output-to-a-file-using-python
-# http://www.pythonforbeginners.com/files/reading-and-writing-files-in-python
-# with open("exittest", "w")
 
-
-
-# parte para print da saída do programa num arquivo csv, para ser usado em GTFS
-
-# leitura e escrita em Python:
-# http://www.pitt.edu/~naraehan/python2/reading_writing_methods.html
-
-import route.RouteGenerator as rg
-def printGTFS (generation):
-#TODO
-
-# to write a csv file
-# https://docs.python.org/2/library/csv.html
-
-# to create a GTFS format 
-# https://developers.google.com/transit/gtfs/examples/gtfs-feed?hl=pt-br
-# http://gtfs.org/best-practices/
-    
-    # minimum files to create a shapefile in gis (like tutorial below)
-    # (http://www.stevencanplan.com/2016/02/converting-a-transit-agencys-gtfs-to-shapefile-and-geojson-with-qgis/)
-    
-    # create a file stops.txt (save bus stops and its infos)
-    # must have points_ID, points_lat, points_lon at least
-
-    allNodes = rg.Terminals + rg.Nodes
-    stops = open("stops.txt","w")
-    stops.write("stop_id;stop_name;stop_desc;stop_lat;stop_lon;stop_url;location_type;parent_station\n")
-    for node in allNodes:
-        id, name, latlon = node.getIdx(), node.getLabel(), node.getLatLong()
-        string = (str(id)+";"+name+";"+";"+str(latlon[0])+";"+str(latlon[1])+";"+";"+";"+"\n")
-        stops.writelines(string)
-    stops.close()
-
-    
-    # create a file shapes.txt (save bus lines and its infos)
-    # must have points_ID, points_lat, points_lon at least
-    
-    routeIndex = 0
-    shapes = open('shapes.txt', 'w')
-    shapes.write("shape_id;shape_pt_lat;shape_pt_lon;shape_pt_sequence;shape_dist_traveled\n")
-    for individual in generation:
-        routeList = individual.getGenes()
-        for rt in routeList:
-            nodeList = rt.getNodes()
-            routeIndex+=1
-            nodeSeq, distAcc = 0, 0
-            lastNode=""
-            for i, node in enumerate(nodeList):
-                if (i != 0): distAcc = lastNode.getDistanceOfNode(node)
-                latlon = node.getLatLong()
-                nodeSeq+=1
-                string=(str(routeIndex)+";"+str(latlon[0])+";"+str(latlon[1])+";"+str(nodeSeq)+";"+str(distAcc)+"\n")
-                lastNode = node
-                shapes.writelines(string)    
-    shapes.close()
 """
+# minimum gtfs files to create a shapefile in gis (like tutorial below)
+# (http://www.stevencanplan.com/2016/02/converting-a-transit-agencys-gtfs-to-shapefile-and-geojson-with-qgis/)
+
 # https://glenbambrick.com/2016/01/09/csv-to-shapefile-with-pyshp/
+
+import shapefile, csv
+def getWKT_PRJ (epsg_code):
+ import urllib
+ wkt = urllib.urlopen("http://spatialreference.org/ref/epsg/{0}/prettywkt/".format(epsg_code))
+ remove_spaces = wkt.read().replace(" ","")
+ output = remove_spaces.replace("\n", "")
+ return output
+
 def printShapefile(generation):
 #TODO
-
+usp_shp = shapefile.Writer()
 
 """
