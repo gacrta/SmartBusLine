@@ -6,7 +6,6 @@ Created on Fri Oct 13 19:23:44 2017
 """
 
 
-#import node
 import route
 import random
 import copy
@@ -26,7 +25,7 @@ from node import NodeList as nl
 class Individuals:
     
     numRoutes = 3 # pode ser alterado direto aqui
-    LACKING_NODE_PENALTY = 50
+    LACKING_NODE_PENALTY = 5
     
     def __init__ (self, label=None, fitness=None, genes=None):
         self.label = label
@@ -177,14 +176,89 @@ class Individuals:
     def evalFitness2(self, solutions):
         sumDemand = 0
         demandTimesTime = 0
+        unnatendedDemand = 0
         # solutions has type [[demand, time], ...]
         for aSolution in solutions:
             sumDemand += aSolution[0]
-            demandTimesTime += aSolution[0]*aSolution[1]
+            if aSolution[1] != -1:
+                demandTimesTime += aSolution[0]*aSolution[1]
+            else:
+                unnatendedDemand += aSolution[0]
         result = demandTimesTime/sumDemand
-        #result += self.getLackingNodes()*Individuals.LACKING_NODE_PENALTY
+        result += self.getLackingNodes()*Individuals.LACKING_NODE_PENALTY
+        result += unnatendedDemand
         #print result
         self.fitness = result
+
+    # method that evaluates fitness as CHAKROBORTY
+    def evalFitness3(self, K1, xm, K2, K3,
+                     ODmatrix, transferTime, minimumPath, averageSpeed):
+        solutions = self.evalIVT(ODmatrix, transferTime, averageSpeed)
+        # -K1/xm <= b1 <= 0
+        b1 = -K1/(2*xm)
+        F1 = self.evalF1(solutions, K1, xm, b1, minimumPath, averageSpeed)
+        # 1 <= b2 <= 2*K2
+        b2 = K2
+        F2 = self.evalF2(solutions, K2, b2)
+        # - K3 <= b3 <= 0
+        b3 = -K3/2
+        F3 = self.evalF3(solutions, K3, b3)
+        self.fitness = F1+F2+F3
+
+    # evaluetes the time part of fitness
+    def evalF1(self, solutions, K1, xm, b1, minimumPath, averageSpeed):
+        attendedDemand = 0
+        acumulatedF = 0
+        for aSolution in solutions:
+            i = aSolution[0]
+            j = aSolution[1]
+            demand = aSolution[2]
+            time = aSolution[3]
+            if time != -1:
+                attendedDemand += demand
+                x = time - minimumPath[i][j]*averageSpeed
+                if x <= xm:
+                    f = -(b1/xm + K1/(xm^2))*x**2 + b1*x + K1
+                else:
+                    f = 0
+                acumulatedF += f*demand
+        if attendedDemand == 0:
+            return K1
+        return acumulatedF/attendedDemand
+
+    # evaluetes the transfer part of fitness
+    def evalF2(self, solutions, K2, b2):
+        a = 2
+        b = 1
+        attendedDirectly = 0
+        attendedWithTransfer = 0
+        for aSolution in solutions:
+            demand = aSolution[2]
+            time = aSolution[3]
+            transfer = aSolution[4]
+            if time != -1:
+                if transfer is False:
+                    attendedDirectly += demand
+                else:
+                    attendedWithTransfer += demand
+        totalDemand = attendedDirectly + attendedWithTransfer
+        if totalDemand == 0:
+            return 0
+        dT = (a*attendedDirectly + b*attendedWithTransfer)/totalDemand
+        return ((K2 - b2*a)/(a**2))*(dT**2) + b2*dT
+
+    # evaluetes the attended and unattended demand part of fitness
+    def evalF3(self, solutions, K3, b3):
+        unAttendedDemand = 0
+        totalDemand = 0
+        for aSolution in solutions:
+            demand = aSolution[2]
+            time = aSolution[3]
+            if time == -1:
+                unAttendedDemand += demand
+            totalDemand += demand
+        dUn = unAttendedDemand/totalDemand
+        return -(b3 + K3)*(dUn**2) + b3*dUn + K3
 
     # evaluates the In Vehicle Travel time for each OD pair
     def evalIVT(self, ODmatrix, transferTime, averageSpeed):
@@ -206,14 +280,17 @@ class Individuals:
             # the demand could be unattended
             if lenghtOR == 0 or lenghtDR == 0:
                 travelTime = -1
+                transfer = False
             else:
-                travelTime = self.getTravelTime(startId, originRoutes,
-                                                endId, destinationRoutes,
-                                                transferTime, averageSpeed)
+                [travelTime, transfer] = self.getTravelTime(startId,
+                                                            originRoutes,
+                                                            endId,
+                                                            destinationRoutes,
+                                                            transferTime,
+                                                            averageSpeed)
 
-            solutionsTime.append([demand, travelTime])
-        print solutionsTime
-        return self.evalFitness2(solutionsTime)
+            solutionsTime.append([startId, endId, demand, travelTime, transfer])
+        return solutionsTime
 
     def getTravelTime(self, originNode, originRouteList,
                       destinationNode, destinationRouteList,
@@ -232,7 +309,7 @@ class Individuals:
                     # if time = 0, it is a unatended demand
                     solutions.append(time)
             if len(solutions) > 0:
-                return min(solutions)
+                return [min(solutions), False]
 
         # otherwise, search for common nodes between each element of [Ro]
         # and [Rd]
@@ -251,10 +328,10 @@ class Individuals:
 
         # if a transfer node is found, return the smallest time
         if len(solutions) != 0:
-            return min(solutions)
+            return [min(solutions), True]
 
         # else, the demand is unattended
-        return -1
+        return [-1, False]
 
     # method that return individual routes that posses interestNode
     def getRoutesWithNode(self, interestNodeId):

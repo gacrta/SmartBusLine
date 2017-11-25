@@ -11,6 +11,7 @@ import random
 import numpy
 import matplotlib.pyplot as plt
 import copy
+from route import RouteGenerator as rg
 
 MUTATION_RATE = 0.05
 AVERAGE_SPEED = 96.3  # m/s = 26 km/h * 3.6
@@ -25,7 +26,7 @@ def printPopulationStatus(pop, iteration):
         print (msg)
 
 def populationSort(pop):
-        return sorted(pop, key=operator.attrgetter("fitness"), reverse=True)
+        return sorted(pop, key=operator.attrgetter("fitness"), reverse=False)
 
 def populationSelect(pop, tamPop):
 
@@ -95,11 +96,19 @@ od_data = [[0, 25, 200],
            [0, 35, 45],
            [0, 36, 60]]
 
+# constants of eval
+K1 = 10
+xm = 30
+K2 = 10
+K3 = 10
+minimumPath = rg.getFloydMinimumPath()
+
 # cria uma populacao
 for i in range(tamPop):
     ind = individuals.Individuals(str(i))
     #ind.printIndividual()
-    ind.evalIVT(od_data, TRANSFER_TIME, AVERAGE_SPEED)
+    ind.evalFitness3(K1, xm, K2, K3, od_data,
+                     TRANSFER_TIME, minimumPath, AVERAGE_SPEED)
     populacao.append(ind)
 
 nextGeneration = copy.copy(populacao)
