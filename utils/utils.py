@@ -2,6 +2,7 @@
 
 import json
 import node
+import csv
 
 
 def readNodesJsonFile():
@@ -33,7 +34,6 @@ def parseJsonString(jsonString):
     return [nodes, terminals]
 
 
-
 """ TODO - deixar apto p ler um csv de uma API, p. ex. """
 
 # (Python2) https://docs.python.org/2/library/csv.html
@@ -41,9 +41,19 @@ def parseJsonString(jsonString):
 # http://www.pythonforbeginners.com/systems-programming/using-the-csv-module-in-python/
 # https://pymotw.com/2/csv/
 
-import csv
-def readCsvFiles():
-    filename = "data/csvTest.csv"
-    with open(filename, 'rb') as csvfile:
+# method that reads OD info from .csv file
+def parseCsvODFile():
+    od_matrix = "data/matriz_od_fake.csv"
+    with open(od_matrix, 'rb') as csvfile:
         filereader = csv.reader(csvfile)
-        return filereader
+        destinations = filereader.next()
+        demandMatrix = []
+        for row in filereader:
+            origin = row[0]
+            tam = len(row)
+            for i in range(1, tam):
+                dest = row[i]
+                if dest != "" and dest != "EOT" and dest != "0":
+                    demandMatrix.append([int(origin), int(destinations[i]),
+                                         int(dest)])
+        return demandMatrix
