@@ -101,12 +101,12 @@ def print_gtfs_shapes_file(generation, allNodes):
     shapes.close()
     
 
-def read_gtfs_sptrans():
+def read_sptrans_files(filename):
     
-    f = io.open("data/sptrans_gtfs/stops.txt", 'r', encoding='utf-8').readlines()
+    f = io.open("data/sptrans_gtfs/"+filename, 'r', encoding='utf-8').readlines()
     matrix, array = [], []
     str = ""
-    for ind in f[:4]:
+    for ind in f:
         for char in ind:
             if (char == ",") or (char == '\n'):
                 array.append(str)
@@ -114,3 +114,28 @@ def read_gtfs_sptrans():
             else: str+=char
         matrix.append(array)
         array = []
+    return matrix
+
+def gtfs_sptrans():
+    
+    mat_stops = read_sptrans_files("stops.txt")
+    mat_stoptimes = read_sptrans_files("stop_times.txt")
+    mat_trips = read_sptrans_files("trips.txt")
+    mat_shapes = read_sptrans_files("shapes.txt")
+    
+    #lists of interest
+    shapes_USP, trips_USP, stoptimes_USP, stops_USP = [], [], [], []
+    
+    # trips
+    trips_USP.append(mat_trips[0])
+    for line in mat_trips:
+        for col in line:
+            if (col == "\"8012-10\"") or (col == "\"8022-10\""):
+                trips_USP.append(line)
+    
+    #shapes
+    shapes_USP.append(mat_shapes[0])
+    for line in mat_shapes:
+        for col in line:
+            if (col == trips_USP[1][5]) or (col == trips_USP[2][5]):
+                shapes_USP.append(line)
