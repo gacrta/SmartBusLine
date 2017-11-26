@@ -80,15 +80,12 @@ class Route:
             startNode = self.getNodeById(startNodeIdx)
             startNodeInnerId = self.nodes.index(startNode)
             remainingNodes = self.nodes[startNodeInnerId:]
-            print startNodeInnerId
         else:
             startNode = self.getNodeById(startNodeIdx)
             startNodeInnerId = self.nodes.index(startNode)
             endNode = self.getNodeById(endNodeIdx)
             endNodeInnerId = self.nodes.index(endNode)
             remainingNodes = self.nodes[startNodeInnerId:endNodeInnerId+1]
-            print startNodeInnerId, endNodeInnerId
-        print (remainingNodes)
         cDistance = 0
         if len(remainingNodes)>0:
             cNode = remainingNodes[0]
@@ -289,7 +286,7 @@ class RouteGenerator:
 
     # method that returns the minimum path matrix
     @staticmethod
-    def getFloydMinimumPath():
+    def getFloydMinimumTime(averageSpeed):
         allNodes = RouteGenerator.getAllNodes()
         inf = 100000  # value bigger than any distance
 
@@ -302,7 +299,7 @@ class RouteGenerator:
                 # if dist = -1, the nodes are not neighbors
                 if dist == -1:
                     dist = inf
-                line.append(dist)
+                line.append(dist/(60*averageSpeed))
             minDistMatrix.append(line)
 
         # evaluate floyd minimum path

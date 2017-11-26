@@ -23,10 +23,10 @@ from node import NodeList as nl
 # https://stackoverflow.com/questions/8609153/why-do-we-use-init-in-python-classes
 
 class Individuals:
-    
+
     numRoutes = 3 # pode ser alterado direto aqui
     LACKING_NODE_PENALTY = 5
-    
+
     def __init__ (self, label=None, fitness=None, genes=None):
         self.label = label
         if genes is None:
@@ -40,19 +40,19 @@ class Individuals:
 
     def __str__ (self):
         print ("varias rota")
-        
+
     @staticmethod
     def createIndividual ():
         #allNodes = route.Route.Nodes + route.Route.Terminals # concatenates the 2 lists
         newInd = [] # array de rotas
-                
+
         # assim eh muito mais facil
         for i in range (Individuals.numRoutes):
             # cria Rotas
             newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
             newInd.append( newRoute )
         return newInd
-    
+
     # method to easily read individual contents
     def printIndividual(self):
         print("Printing Individual " + self.label)
@@ -122,7 +122,7 @@ class Individuals:
             newPopList.append( Individuals("", None, newInd2) )
         #if len(popList) == 1: newPopList.append (Individuals.mutation(popList.pop()))
         return newPopList
-        
+
 		# TODO: COMO SERÁ A MUTAÇÃO? (i) um individuo com uma nova rota ou (ii) uma das rotas do individuo alterada?
 		# recebe o individuo a ser mutado
     # estou tomando ind como um array; de array (rotas); de array (nos)
@@ -197,8 +197,8 @@ class Individuals:
         # -K1/xm <= b1 <= 0
         b1 = -K1/(2*xm)
         F1 = self.evalF1(solutions, K1, xm, b1, minimumPath, averageSpeed)
-        # 1 <= b2 <= 2*K2
-        b2 = K2
+        # K2 <= b2 <= 2*K2
+        b2 = 3*K2/2
         F2 = self.evalF2(solutions, K2, b2)
         # - K3 <= b3 <= 0
         b3 = -K3/2
@@ -216,19 +216,19 @@ class Individuals:
             time = aSolution[3]
             if time != -1:
                 attendedDemand += demand
-                x = time - minimumPath[i][j]*averageSpeed
+                x = time - minimumPath[i][j]
                 if x <= xm:
-                    f = -(b1/xm + K1/(xm^2))*x**2 + b1*x + K1
+                    f = -(b1/xm + K1/(xm**2))*x**2 + b1*x + K1
                 else:
                     f = 0
                 acumulatedF += f*demand
         if attendedDemand == 0:
-            return K1
+            return 0
         return acumulatedF/attendedDemand
 
     # evaluetes the transfer part of fitness
     def evalF2(self, solutions, K2, b2):
-        a = 2
+        a = 3
         b = 1
         attendedDirectly = 0
         attendedWithTransfer = 0
@@ -247,7 +247,7 @@ class Individuals:
         dT = (a*attendedDirectly + b*attendedWithTransfer)/totalDemand
         return ((K2 - b2*a)/(a**2))*(dT**2) + b2*dT
 
-    # evaluetes the attended and unattended demand part of fitness
+    # evaluetes the unattended demand part of fitness
     def evalF3(self, solutions, K3, b3):
         unAttendedDemand = 0
         totalDemand = 0
@@ -343,7 +343,6 @@ class Individuals:
 
     def getLackingNodes(self):
         lenAllPossibleNodes = len(route.RouteGenerator.getAllNodes())
-        print(lenAllPossibleNodes)
         return lenAllPossibleNodes - len(self.getAllNodes())
 
     # returns a list of all nodes of this individual, without repetition
