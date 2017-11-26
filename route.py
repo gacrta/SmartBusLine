@@ -78,25 +78,30 @@ class Route:
             remainingNodes = self.nodes
         elif endNodeIdx is None:
             startNode = self.getNodeById(startNodeIdx)
-            remainingNodes = self.nodes[startNode:]
+            startNodeInnerId = self.nodes.index(startNode)
+            remainingNodes = self.nodes[startNodeInnerId:]
         else:
             startNode = self.getNodeById(startNodeIdx)
+            startNodeInnerId = self.nodes.index(startNode)
             endNode = self.getNodeById(endNodeIdx)
-            remainingNodes = self.nodes[startNode:endNode]
+            endNodeInnerId = self.nodes.index(endNode)
+            remainingNodes = self.nodes[startNodeInnerId:endNodeInnerId+1]
         cDistance = 0
-        cNode = remainingNodes[0]
-        for nextNode in remainingNodes[1:]:
-            cDistance += cNode.getDistanceOfNode(nextNode)
-            cNode = nextNode
+        if len(remainingNodes)>0:
+            cNode = remainingNodes[0]
+            for nextNode in remainingNodes[1:]:
+                cDistance += cNode.getDistanceOfNode(nextNode)
+                cNode = nextNode
         return cDistance
 
     # evaluates route time from startNode to endNode
     def evalRouteTime(self, startNode, endNode, averageSpeed):
         distance = self.evalRouteDistance(startNode, endNode)
 
-        if distance is not None:
-            return averageSpeed*distance
-        return None
+        if distance is not 0:
+            # returns time in minutes
+            return distance/(60*averageSpeed)
+        return 0
 
     # remove the last node and returns it
     def removeLastNode(self):
@@ -144,7 +149,7 @@ class Route:
 
     # returns a string of route nodes
     def getString(self):
-        if self.string == None:
+        if self.string is None:
             routeString = ""
             for aNode in self.nodes:
                 routeString += aNode.getLabel()
@@ -153,8 +158,12 @@ class Route:
 
     # returns a list of nodes that this has with otherRoute
     def getCommonNodes(self, otherRoute):
-        # TODO
-        return None
+        commonNodes = []
+        for mNode in self.nodes:
+            mNodeIdx = mNode.getIdx()
+            if otherRoute.getNodeById(mNodeIdx) is not None:
+                commonNodes.append(mNodeIdx)
+        return commonNodes
 
     # returns true if this route is equal to otherRoute
     def isEqualToRoute(self, otherRoute):
@@ -177,7 +186,7 @@ class Route:
 class RouteGenerator:
     """ Static class used to create Route objects """
 
-    MAX_NUMBER_OF_NODES = 15
+    MAX_NUMBER_OF_NODES = 25
     ONLY_TERMINAL_ENDING = True
 
     jsonString = utils.readNodesJsonFile()
@@ -212,7 +221,7 @@ class RouteGenerator:
 
     @staticmethod
     def getAllNodes():
-        return RouteGenerator.Nodes + RouteGenerator.Terminals
+        return RouteGenerator.Terminals + RouteGenerator.Nodes
 
     # adds a random neighbor to a given route. returns true if
     # succeeds and false otherwise
@@ -274,6 +283,34 @@ class RouteGenerator:
         print ("Route " + label + " is VALID.")
         newRoute.setLenght(newRoute.evalRouteDistance())
         return newRoute
+
+    # method that returns the minimum path matrix
+    @staticmethod
+    def getFloydMinimumTime(averageSpeed):
+        allNodes = RouteGenerator.getAllNodes()
+        inf = 100000  # value bigger than any distance
+
+        # init matrix with all neighbors distance
+        minDistMatrix = []
+        for rowNode in allNodes:
+            line = []
+            for columnNode in allNodes:
+                dist = rowNode.getDistanceOfNode(columnNode)
+                # if dist = -1, the nodes are not neighbors
+                if dist == -1:
+                    dist = inf
+                line.append(dist/(60*averageSpeed))
+            minDistMatrix.append(line)
+
+        # evaluate floyd minimum path
+        N = len(allNodes)
+        for k in range(N):
+            for i in range(N):
+                for j in range(N):
+                    innerDist = minDistMatrix[i][k]+minDistMatrix[k][j]
+                    if minDistMatrix[i][j] > innerDist:
+                        minDistMatrix[i][j] = innerDist
+        return minDistMatrix
 
 
 class RouteList:

@@ -237,7 +237,7 @@
         "id":38,
         "label":"L1 - Biblioteca Farmacia e Quimica",
         "distance":[260, 180, 1400, 1400],
-        "neighbors":[37, 39, 46, 43],
+        "neighbors":[37, 41, 46, 43],
 		"latlong":[-23.56666, -46.72727] },
         {
         "id":39,
@@ -249,7 +249,7 @@
         "id":41,
         "label":"N1 - Rua do Lago I",
         "distance":[535, 325, 380],
-        "neighbors":[39, 59, 59],
+        "neighbors":[39, 59, 56],
 		"latlong":[-23.56743, -46.72880] },
         {
         "id":42,

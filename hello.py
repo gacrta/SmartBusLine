@@ -8,14 +8,18 @@ Created on Tue Sep 12 19:24:38 2017
 import individuals
 import operator, random, numpy, copy
 import matplotlib.pyplot as plt
+from route import RouteGenerator as rg
 
-MUTATION_RATE = 0.05
+MUTATION_RATE = 0.01
+AVERAGE_SPEED = 7.22  # m/s = 26 km/h / 3.6
+TRANSFER_TIME = 10  # minutes
+
 
 def printPopulationStatus(pop, iteration):
     print("Population Status for " + str(iteration) + " iteration:")
     for ind in pop:
         #print ("Individual " + ind.getLabel() + ": " + str(ind.evalFitness()))
-        msg = "Individual %(indLabel)s: %(fitness).2f"%{"indLabel":ind.getLabel(),"fitness":ind.evalFitness()}
+        msg = "Individual %(indLabel)s: %(fitness).2f"%{"indLabel":ind.getLabel(),"fitness":ind.fitness}
         print (msg)
 
 def populationSort(pop):
@@ -46,53 +50,81 @@ def getPopulationMean(popArray):
 def getPopulationMax(popArray):
     return popArray["fitness"].max()
 
+def getPopulationMin(popArray):
+    return popArray["fitness"].min()
+
 def getPopulationStd(popArray):
     return popArray["fitness"].std()
 
+def evalPopulation(population, K1, xm, K2, K3, od_data,
+                   transferTime, minimumPath, averageSpeed):
+    for ind in population:
+        ind.evalFitness3(K1, xm, K2, K3, od_data,
+                         transferTime, minimumPath, averageSpeed)
+
 def storePopulationData(dataStorage, population, iteration):
-    
+
     popArray = getPopulationArray(population)
-    
+
     popMean = getPopulationMean(popArray)
     popMax = getPopulationMax(popArray)
     popStd = getPopulationStd(popArray)
-    
+
     dataStorage.append([iteration, popMax, popMean, popStd])
 
 def plotPopulationEvolution(dataStorage):
     dataArray = numpy.array(dataStorage)
-    iterations = dataArray[:,0]
-    popMax = dataArray[:,1]
-    popMean = dataArray[:,2]
-    popStd = dataArray[:,3]
+    iterations = dataArray[:, 0]
+    popMax = dataArray[:, 1]
+    popMean = dataArray[:, 2]
+    popStd = dataArray[:, 3]
     plt.errorbar(iterations, popMean, yerr=popStd)
     plt.plot(iterations, popMax)
     plt.xlabel("Iterations")
-    plt.ylabel("Distance (m)")
+    plt.ylabel("Fitness")
     plt.title("Best Individual evolution")
     plt.legend(["Max", "Mean"])
     plt.grid()
     plt.savefig("grafics.png")
     #plt.show()
 
-tamPop = 20 # pode ser alterado direto aqui
+tamPop = 80  # pode ser alterado direto aqui
 populacao = []
-ind = [] #individuo
+ind = []  # individuo
 routeArray = []
+
+# sample OD matrix
+# start, end, demand
+od_data = [[0, 25, 200],
+           [9, 18, 30],
+           [0, 18, 50],
+           [0, 19, 30],
+           [0, 35, 45],
+           [0, 36, 60]]
+
+# constants of eval
+K1 = 10.0
+xm = 30.0
+K2 = 10.0
+K3 = 10.0
+minimumPath = rg.getFloydMinimumTime(AVERAGE_SPEED)
 
 # cria uma populacao
 for i in range(tamPop):
     ind = individuals.Individuals(str(i))
-    ind.printIndividual()
+    #ind.printIndividual()
     populacao.append(ind)
 
 nextGeneration = copy.copy(populacao)
 populationData = []
 
-for i in range(20):
+for i in range(25):
 
     if (i % 2 == 0):
         storePopulationData(populationData, nextGeneration, i)
+
+    evalPopulation(nextGeneration, K1, xm, K2, K3, od_data,
+                   TRANSFER_TIME, minimumPath, AVERAGE_SPEED)
 
     #printPopulationStatus(nextGeneration, i)
     sortedPop = populationSort(nextGeneration)
