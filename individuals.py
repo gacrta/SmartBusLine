@@ -27,18 +27,21 @@ class Individuals:
     numRoutes = 3 # pode ser alterado direto aqui
     LACKING_NODE_PENALTY = 5
 
-    def __init__ (self, label=None, fitness=None, genes=None):
+    def __init__(self, label=None, fitness=None, genes=None):
         self.label = label
         if genes is None:
             self.genes = Individuals.createIndividual()
         else:
             self.genes = genes
-            #calcula o fitness usando as rotas desse individuo
-        #self.fitness = self.evalFitness()
         self.fitness = 0
+        # boolean that indicates if fitness need to be evaluated
+        self.updated = False
+        # list of useful data for plotting purposes
+        # [meanTime, %direct, %withTransf, %unattended]
+        self.data=[0,0,0,0]
         # FIM DO GERADOR
 
-    def __str__ (self):
+    def __str__(self):
         print ("varias rota")
 
     @staticmethod
@@ -47,10 +50,15 @@ class Individuals:
         newInd = [] # array de rotas
 
         # assim eh muito mais facil
-        for i in range (Individuals.numRoutes):
+        while len(newInd) != (Individuals.numRoutes):
             # cria Rotas
-            newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
-            newInd.append( newRoute )
+            newRoute = route.RouteGenerator.getNewRoute("")
+            newRouteIsUnique = True
+            for aRoute in newInd:
+                if aRoute.getString() == newRoute.getString():
+                    newRouteIsUnique = False
+            if (newRouteIsUnique):
+                newInd.append( newRoute )
         return newInd
 
     # method to easily read individual contents
@@ -69,8 +77,14 @@ class Individuals:
             self.fitness = self.evalFitness()
         return self.fitness
 
+    def getUsefulData(self):
+        return self.data
+
     def getGenes(self):
         return self.genes
+
+    def isUpdated(self):
+        return self.updated
 
     # takes an ind and return a list of cloned routes
     def cloneIndGenes(self):
@@ -88,38 +102,54 @@ class Individuals:
     # 2. (i) se appenda parte uma rota de um pai na de outro ou (ii) se pega uma rota de cada pai
 	 # 3. (i) retorna um unico filho ou (ii) retorna a lista com a proxima geracao direto
     @staticmethod
-    def reproduction1 (ind1, ind2):
+    def reproduction1(ind1, ind2):
         individualSon = []
-        
+
         return individualSon
-    
+
     @staticmethod
-    def reproduction2 (popList):
+    def reproduction2(popList):
 
         # https://www.python-course.eu/python3_deep_copy.php
         # tutorial copy/deepcopy ~ referencias
 
         newPopList = copy.copy(popList)
-        # this loop shorts indList removing two of its ind by turn, until it 
+        # this loop shorts indList removing two of its ind by turn, until it
         # has 0 or 1 (and with 0/1 elem. could not use remove twice) elements
         while (len(popList) > 1):
+
             ind1 = random.choice(popList)
-            popList.remove(ind1)
             ind2 = random.choice(popList)
-            popList.remove(ind2)
+            while (ind1 == ind2):
+                ind1 = random.choice(popList)
+                ind2 = random.choice(popList)
             rL1, rL2 = ind1.cloneIndGenes(), ind2.cloneIndGenes()
             newInd1, newInd2 = [], []
-            for i in range (Individuals.numRoutes):
+            indReproductionDone = False
+            i = 0
+            while(not indReproductionDone):
                 r1, r2 = random.choice(rL1), random.choice(rL2)
-                if i == 2:
-                    newInd1.append( r1 ), newInd2.append( r2 )
-                else:
-                    newInd1.append( r2 ), newInd2.append( r1 )
-                rL1.remove(r1), rL2.remove(r2)
-            #newPopList.append( Individuals(ind1.label+ind2.label, None, newInd1) )
-            #newPopList.append( Individuals(ind2.label+ind1.label, None, newInd2) )
-            newPopList.append( Individuals("", None, newInd1) )
-            newPopList.append( Individuals("", None, newInd2) )
+                if r1.getString() != r2.getString():
+                    if i % 2 == 0:
+                        newInd1.append( r1 ), newInd2.append( r2 )
+                    else:
+                        newInd1.append( r2 ), newInd2.append( r1 )
+                    rL1.remove(r1), rL2.remove(r2)
+                elif (len(rL1) == 1):
+                    break
+                if (len(rL1) == 0):
+                    indReproductionDone = True
+                i+=1
+            if (indReproductionDone):
+                #newPopList.append( Individuals(ind1.label+ind2.label, None, newInd1) )
+                #newPopList.append( Individuals(ind2.label+ind1.label, None, newInd2) )
+                popList.remove(ind1)
+                popList.remove(ind2)
+                newPopList.append( Individuals("", None, newInd1) )
+                newPopList.append( Individuals("", None, newInd2) )
+            else:
+                del(newInd1)
+                del(newInd2)
         #if len(popList) == 1: newPopList.append (Individuals.mutation(popList.pop()))
         return newPopList
 
@@ -139,7 +169,7 @@ class Individuals:
                 newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
                 indMutated.append(newRoute)
         return Individuals(ind.getLabel() + "M", None, indMutated)
-  
+
     """   
   
   # se dois a dois, repr recebe como parametro ind1, ind2, certo? ou faz um rand dentro de uma matriz
@@ -187,28 +217,28 @@ class Individuals:
         result = demandTimesTime/sumDemand
         result += self.getLackingNodes()*Individuals.LACKING_NODE_PENALTY
         result += unnatendedDemand
-        #print result
         self.fitness = result
 
     # method that evaluates fitness as CHAKROBORTY
     def evalFitness3(self, K1, xm, K2, K3,
                      ODmatrix, transferTime, minimumPath, averageSpeed):
         solutions = self.evalIVT(ODmatrix, transferTime, averageSpeed)
-        # -K1/xm <= b1 <= 0
-        b1 = -K1/(2*xm)
-        F1 = self.evalF1(solutions, K1, xm, b1, minimumPath, averageSpeed)
-        # K2 <= b2 <= 2*K2
-        b2 = 3*K2/2
-        F2 = self.evalF2(solutions, K2, b2)
-        # - K3 <= b3 <= 0
-        b3 = -K3/2
-        F3 = self.evalF3(solutions, K3, b3)
+
+        F1 = self.evalF1(solutions, K1, xm, minimumPath, averageSpeed)
+        F2 = self.evalF2(solutions, K2)
+        F3 = self.evalF3(solutions, K3)
+
         self.fitness = F1+F2+F3
+        self.updated = True
 
     # evaluetes the time part of fitness
-    def evalF1(self, solutions, K1, xm, b1, minimumPath, averageSpeed):
+    def evalF1(self, solutions, K1, xm, minimumPath, averageSpeed):
         attendedDemand = 0
         acumulatedF = 0
+        acumulatedTime = 0
+        # -K1/xm <= b1 <= 0
+        b1 = -K1/(2*xm)
+
         for aSolution in solutions:
             i = aSolution[0]
             j = aSolution[1]
@@ -216,22 +246,28 @@ class Individuals:
             time = aSolution[3]
             if time != -1:
                 attendedDemand += demand
+                acumulatedTime += time*demand
                 x = time - minimumPath[i][j]
                 if x <= xm:
                     f = -(b1/xm + K1/(xm**2))*x**2 + b1*x + K1
                 else:
                     f = 0
                 acumulatedF += f*demand
+
         if attendedDemand == 0:
             return 0
+        self.data[0] = acumulatedTime/attendedDemand
         return acumulatedF/attendedDemand
 
     # evaluetes the transfer part of fitness
-    def evalF2(self, solutions, K2, b2):
+    def evalF2(self, solutions, K2):
         a = 3
         b = 1
+        # K2/a <= b2 <= 2*K2/a
+        b2 = 3*K2/(2*a)
         attendedDirectly = 0
         attendedWithTransfer = 0
+
         for aSolution in solutions:
             demand = aSolution[2]
             time = aSolution[3]
@@ -241,23 +277,31 @@ class Individuals:
                     attendedDirectly += demand
                 else:
                     attendedWithTransfer += demand
-        totalDemand = attendedDirectly + attendedWithTransfer
+
+        totalDemand = float(attendedDirectly + attendedWithTransfer)
         if totalDemand == 0:
             return 0
+        self.data[1] = float(attendedDirectly)/totalDemand
+        self.data[2] = float(attendedWithTransfer)/totalDemand
         dT = (a*attendedDirectly + b*attendedWithTransfer)/totalDemand
         return ((K2 - b2*a)/(a**2))*(dT**2) + b2*dT
 
     # evaluetes the unattended demand part of fitness
-    def evalF3(self, solutions, K3, b3):
+    def evalF3(self, solutions, K3):
+        # - K3 <= b3 <= 0
+        b3 = -K3/2
         unAttendedDemand = 0
         totalDemand = 0
+
         for aSolution in solutions:
             demand = aSolution[2]
             time = aSolution[3]
             if time == -1:
                 unAttendedDemand += demand
             totalDemand += demand
-        dUn = unAttendedDemand/totalDemand
+
+        dUn = float(unAttendedDemand)/totalDemand
+        self.data[3] = dUn
         return -(b3 + K3)*(dUn**2) + b3*dUn + K3
 
     # evaluates the In Vehicle Travel time for each OD pair

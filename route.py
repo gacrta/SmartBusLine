@@ -152,8 +152,8 @@ class Route:
         if self.string is None:
             routeString = ""
             for aNode in self.nodes:
-                routeString += aNode.getLabel()
-            self.string = routeString
+                routeString += (str(aNode.getIdx()) + "_")
+            self.string = routeString[:len(routeString)-1]
         return self.string
 
     # returns a list of nodes that this has with otherRoute
