@@ -23,14 +23,16 @@ def parseJsonString(jsonString):
                                jsonNode['label'],
                                jsonNode['neighbors'],
                                jsonNode['distance'],
-                               jsonNode['latlong']))
+                               jsonNode['latlong'],
+                               jsonNode['neighbors_latlong']))
 
     for jsonNode in jsonStruct['network']['terminals']:
         terminals.append(node.Node(jsonNode['id'],
                                    jsonNode['label'],
                                    jsonNode['neighbors'],
                                    jsonNode['distance'],
-                                   jsonNode['latlong']))
+                                   jsonNode['latlong'],
+                                   jsonNode['neighbors_latlong']))
     return [nodes, terminals]
 
 
@@ -71,10 +73,11 @@ def print_GTFS (generation):
 # must have points_ID, points_lat, points_lon at least
 def print_gtfs_stops_file(generation, allNodes):
     stops = open("data/stops.txt","w")
-    stops.write("stop_id;stop_name;stop_desc;stop_lat;stop_lon;stop_url;location_type;parent_station\n")
+    stops.write("stop_id,\"stop_name\",\"stop_desc\",stop_lat,stop_lon,stop_url,location_type,parent_station\n")
     for a_node in allNodes:
         id, name, latlon = a_node.getIdx(), a_node.getLabel(), a_node.getLatLong()
-        string = (str(id)+";"+name+";"+";"+str(latlon[0])+";"+str(latlon[1])+";"+";"+";"+"\n")
+        prtname = "\"%s\"" % name
+        string = (str(id)+","+prtname+","+","+str(latlon[0])+","+str(latlon[1])+","+","+","+"\n")
         stops.writelines(string)
     stops.close()
 
@@ -83,7 +86,7 @@ def print_gtfs_stops_file(generation, allNodes):
 def print_gtfs_shapes_file(generation, allNodes):
     routeIndex = 0
     shapes = open('data/shapes.txt', 'w')
-    shapes.write("shape_id;shape_pt_lat;shape_pt_lon;shape_pt_sequence;shape_dist_traveled\n")
+    shapes.write("shape_id,shape_pt_lat,shape_pt_lon,shape_pt_sequence,shape_dist_traveled\n")
     for individual in generation:
         routeList = individual.getGenes()
         for rt in routeList:
@@ -94,6 +97,7 @@ def print_gtfs_shapes_file(generation, allNodes):
             for i, a_node in enumerate(nodeList):
                 if (i != 0): distAcc = lastNode.getDistanceOfNode(a_node)
                 latlon = a_node.getLatLong()
+                neighbor_latlon_list = a_node
                 nodeSeq+=1
                 string=(str(routeIndex)+";"+str(latlon[0])+";"+str(latlon[1])+";"+str(nodeSeq)+";"+str(distAcc)+"\n")
                 lastNode = a_node
