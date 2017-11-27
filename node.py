@@ -5,13 +5,15 @@ class Node:
 
     def __init__(self, idx=0, label="",
                  neighbors=[], distance=[],
-                 latlong=[]):
+                 latlong=[], neighbors_latlong=[]):
         self.idx = idx
         self.label = label
         self.neighbors = {}
+        self.neighbors_latlong = {}
         size = len(distance)
         for i in range(size):
             self.neighbors.update({neighbors[i]: distance[i]})
+            self.neighbors_latlong.update({neighbors[i]: neighbors_latlong[i]})
         self.latlong = latlong
         self.mRoute = None
 
@@ -43,6 +45,13 @@ class Node:
         #else:
         #    dist = -1
         return dist
+    
+    def getNeighborsLatLong(self):
+        if aNode.getIdx() in self.getNeighbors():
+            neighborsList = self.neighbors_latlong[aNode.getIdx()]
+        else:
+            neighborsList = []
+        return neighborsList
 
     # returns a clone of this node
     def cloneNode(self):
@@ -52,6 +61,7 @@ class Node:
         mClone.neighbors = self.neighbors
         mClone.latlong = self.latlong
         mClone.mRoute = self.mRoute
+        mClone.neighbors_latlong = self.neighbors_latlong
         return mClone
 
     # mRoute setter and getter
