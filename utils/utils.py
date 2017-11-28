@@ -93,15 +93,23 @@ def print_gtfs_shapes_file(generation, allNodes):
             nodeList = rt.getNodes()
             routeIndex+=1
             nodeSeq, distAcc = 0, 0
-            lastNode=""
+            last_node=""
             for i, a_node in enumerate(nodeList):
-                if (i != 0): distAcc = lastNode.getDistanceOfNode(a_node)
+                # first node doesn't need distance
+                if (i != 0):
+                    distAcc = last_node.getDistanceOfNode(a_node)
+                    # last node doesn't have neighbor ahead in this route
+                    if ( i < len(nodeList) - 1 ):
+                        nll = last_node.getNeighborsLatLong(a_node) #neighbor_latlon_list
+                        for (j = 0; j < len(nll); j+=2):
+                            nodeSeq+=1
+                            string=(str(routeIndex)+","+str(nll[j])+","+str(nll[j+1])+","+str(nodeSeq)+","+"\n")
+                            shapes.writelines(string)
                 latlon = a_node.getLatLong()
-                neighbor_latlon_list = a_node
                 nodeSeq+=1
-                string=(str(routeIndex)+";"+str(latlon[0])+";"+str(latlon[1])+";"+str(nodeSeq)+";"+str(distAcc)+"\n")
-                lastNode = a_node
-                shapes.writelines(string)    
+                string=(str(routeIndex)+","+str(latlon[0])+","+str(latlon[1])+","+str(nodeSeq)+","+str(distAcc)+"\n")
+                last_node = a_node
+                shapes.writelines(string)
     shapes.close()
     
 
