@@ -223,6 +223,31 @@ class RouteGenerator:
     def getAllNodes():
         return RouteGenerator.Terminals + RouteGenerator.Nodes
 
+    @staticmethod
+    def getRouteFromNodeList(routeLabel, nodeIdList):
+        newRoute = Route(routeLabel)
+        for aNodeId in nodeIdList:
+            thisNode = RouteGenerator.findNodeById(aNodeId)
+            if len(newRoute.nodes) == 0:
+                if (thisNode in RouteGenerator.Terminals):
+                    newRoute.addNode(thisNode)
+                else:
+                    raise ValueError("The node " + thisNode.getLabel() +
+                                     " is not a Terminal.")
+            elif(aNodeId != nodeIdList[-1]):
+                validNeighbors = newRoute.getValidNeighbors()
+                if (aNodeId in validNeighbors):
+                    newRoute.addNode(thisNode)
+                else:
+                    raise ValueError("The node " + thisNode.getLabel() +
+                                     " is not a valid neighbor of " +
+                                     newRoute.getLastNode().getLabel())
+            else:
+                validNeighbors = newRoute.getValidNeighbors()
+                if ((aNodeId in validNeighbors) and (thisNode in RouteGenerator.Terminals)):
+                    newRoute.addNode(thisNode)
+        return newRoute
+
     # adds a random neighbor to a given route. returns true if
     # succeeds and false otherwise
     @staticmethod

@@ -11,10 +11,6 @@ import random
 import copy
 from node import NodeList as nl
 
-# gera Individuos -> x rotas dentro da USP
-# que passem por todos os seus nos e comece/
-# termine em algum dos terminais
-
 # http://mikegrouchy.com/blog/2012/05/be-pythonic-__init__py.html
 # https://stackoverflow.com/questions/448271/what-is-init-py-for?rq=1
 
@@ -23,6 +19,13 @@ from node import NodeList as nl
 # https://stackoverflow.com/questions/8609153/why-do-we-use-init-in-python-classes
 
 class Individuals:
+    """
+
+    gera Individuos -> x rotas dentro da USP
+    que passem por todos os seus nos e comece/
+    termine em algum dos terminais
+
+    """
 
     numRoutes = 3 # pode ser alterado direto aqui
     LACKING_NODE_PENALTY = 5
@@ -46,10 +49,8 @@ class Individuals:
 
     @staticmethod
     def createIndividual ():
-        #allNodes = route.Route.Nodes + route.Route.Terminals # concatenates the 2 lists
         newInd = [] # array de rotas
 
-        # assim eh muito mais facil
         while len(newInd) != (Individuals.numRoutes):
             # cria Rotas
             newRoute = route.RouteGenerator.getNewRoute("")
@@ -68,6 +69,22 @@ class Individuals:
             aRoute.printRouteNodes()
             print(" - Route lenght: " + str(aRoute.getLenght()))
             print("")
+
+    # method that creates current USP bus situation
+    @staticmethod
+    def getCurrentIndividual():
+        uspBus = Individuals(label="Current USP", genes=[])
+        circ1List = [0, 4, 33, 26, 24, 22, 20, 19, 46, 48, 50, 52,
+                     54, 61, 56, 58, 43, 45, 59, 57, 16, 15, 27, 29,
+                     30, 28, 12, 11, 9, 7, 5, 3, 0]
+        circ2List = [0, 4, 6, 8, 10, 13, 14, 60, 17, 18, 21, 23, 25, 35, 36,
+                     38, 40, 55, 61, 53, 51, 49, 47, 44, 42,
+                     41, 39, 37, 34, 31, 32, 5, 3, 0]
+        circ1 = route.RouteGenerator.getRouteFromNodeList("Circ1", circ1List)
+        circ2 = route.RouteGenerator.getRouteFromNodeList("Circ2", circ2List)
+        uspBus.genes.append(circ1)
+        uspBus.genes.append(circ2)
+        return uspBus
 
     def getLabel(self):
         return self.label

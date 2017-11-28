@@ -150,7 +150,6 @@ def plotPopulationEvolution(dataStorage):
     meanDirect = dataArray[:, 6]
     bestTransf = dataArray[:, 9]
     meanTransf = dataArray[:, 8]
-    plt.figure()
     f, ax = plt.subplots(2, sharex=True)
     ax[0].plot(iterations, bestDirect)
     ax[0].plot(iterations, meanDirect)
@@ -178,7 +177,7 @@ def plotPopulationEvolution(dataStorage):
     plt.savefig("graphics_unattended.png")
 
 
-tamPop = 30  # pode ser alterado direto aqui
+tamPop = 10  # pode ser alterado direto aqui
 populacao = []
 ind = []  # individuo
 routeArray = []
@@ -202,7 +201,7 @@ for i in range(tamPop):
 nextGeneration = copy.copy(populacao)
 populationData = []
 
-for i in range(15):
+for i in range(2):
     print ("- Starting iteration " + str(i))
     if (i % 2 == 0):
         print ("- Storing data of iteration " + str(i))
@@ -237,6 +236,11 @@ for i in range(15):
     print ("- End of iteration " + str(i))
 
 plotPopulationEvolution(populationData)
+uspBus = individuals.Individuals.getCurrentIndividual()
+evalPopulation([uspBus], K1, xm, K2, K3, od_data,
+               TRANSFER_TIME, minimumPath, AVERAGE_SPEED)
+
+print str(nextGeneration[0].fitness) + " " + str(uspBus.fitness)
 
 print("Done")
 
