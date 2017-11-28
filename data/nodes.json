@@ -588,7 +588,7 @@
 		] ]},
         {
         "id":18,
-        "label":"Q0 - Poli-Eletrotecnica",
+        "label":"R0 - Poli-Eletrotecnica",
         "distance":[475, 340],
         "neighbors":[19, 21],
 		"latlong":[-23.55792, -46.73277],
@@ -598,7 +598,7 @@
 		],[] ]},
 		{
         "id":19,
-        "label":"R0 - Poli-Producao",
+        "label":"Q0 - Poli-Producao",
         "distance":[560, 330, 690],
         "neighbors":[18, 57, 46],
 		"latlong":[-23.55783, -46.73228],
