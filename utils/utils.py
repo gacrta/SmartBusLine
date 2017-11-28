@@ -98,10 +98,10 @@ def print_gtfs_shapes_file(generation, allNodes):
                 # first node doesn't need distance
                 if (i != 0):
                     distAcc = last_node.getDistanceOfNode(a_node)
-                    # last node doesn't have neighbor ahead in this route
+                    # last node doesn't have neighbor ahead
                     if ( i < len(nodeList) - 1 ):
                         nll = last_node.getNeighborsLatLong(a_node) #neighbor_latlon_list
-                        for (j = 0; j < len(nll); j+=2):
+                        for j in range (0, len(nll), 2):
                             nodeSeq+=1
                             string=(str(routeIndex)+","+str(nll[j])+","+str(nll[j+1])+","+str(nodeSeq)+","+"\n")
                             shapes.writelines(string)
@@ -151,3 +151,37 @@ def gtfs_sptrans():
         for col in line:
             if (col == trips_USP[1][5]) or (col == trips_USP[2][5]):
                 shapes_USP.append(line)
+
+""" test function - read only terms and only nodes
+
+import json
+def readTerms():
+    with open("terms.txt", "r") as f:
+        jsonString = f.read()
+        terminals = []
+        jsonStruct = json.loads(jsonString)
+        for jsonNode in jsonStruct['network']['terminals']:
+            terminals.append(node.Node(jsonNode['id'],
+                                   jsonNode['label'],
+                                   jsonNode['neighbors'],
+                                   jsonNode['distance'],
+                                   jsonNode['latlong'],
+                                   jsonNode['neighbors_latlong']))
+        return terminals
+
+import json
+def readNos():
+    with open("nos.txt", "r") as f:
+        jsonString = f.read()
+        nodes = []
+        jsonStruct = json.loads(jsonString)
+        for jsonNode in jsonStruct['network']['nodes']:
+            nodes.append(node.Node(jsonNode['id'],
+                                   jsonNode['label'],
+                                   jsonNode['neighbors'],
+                                   jsonNode['distance'],
+                                   jsonNode['latlong'],
+                                   jsonNode['neighbors_latlong']))
+        return nodes
+        
+"""

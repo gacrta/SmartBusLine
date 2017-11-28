@@ -46,7 +46,7 @@ class Node:
         #    dist = -1
         return dist
     
-    def getNeighborsLatLong(self):
+    def getNeighborsLatLong(self, aNode):
         if aNode.getIdx() in self.getNeighbors():
             neighborsList = self.neighbors_latlong[aNode.getIdx()]
         else:
