@@ -2,14 +2,14 @@
  "network": {
   "name":"usp-complete",
   "lenght":"62",
-	"terminals": [
-		{
+  "terminals": [
+	{
     "id":0,
     "label":"T1 - Terminal Butanta",
     "distance":[1200],
-		"neighbors":[4],
+	 "neighbors":[4],
     "latlong":[-23.57153, -46.70804],
-		"neighbors_latlong": [
+	 "neighbors_latlong":[ [
 		"-23.571826","-46.708550",
 		"-23.571589","-46.709319",
 		"-23.567822","-46.707976",
@@ -36,8 +36,8 @@
     "label":"T2 - Terminal Cidade Universitaria",
     "distance":[440, 395],
     "neighbors":[17, 15],
-		"latlong":[-23.55262, -46.73184],
-		"neighbors_latlong":[ [],[
+    "latlong":[-23.55262, -46.73184],
+	 "neighbors_latlong":[ [],[
 		"-23.552291","-46.731597",
 		"-23.551843","-46.731351",
 		"-23.551748","-46.731282",
@@ -52,7 +52,7 @@
     "label":"T3 - Terminal Veterinaria",
     "distance":[1600, 1100],
     "neighbors":[53, 56],
-		"latlong":[-23.567989,-46.740379]
+		"latlong":[-23.567989,-46.740379],
 		"neighbors_latlong":[ [
 		"-23.568041","-46.740329",
 		"-23.568036","-46.740270",

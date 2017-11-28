@@ -97,7 +97,7 @@ def print_gtfs_shapes_file(generation, allNodes):
             for i, a_node in enumerate(nodeList):
                 if (i != 0): distAcc = lastNode.getDistanceOfNode(a_node)
                 latlon = a_node.getLatLong()
-                neighbor_latlon_list = a_node
+                neighbor_latlon_list = a_node.getNeighborsLatLong()
                 nodeSeq+=1
                 string=(str(routeIndex)+";"+str(latlon[0])+";"+str(latlon[1])+";"+str(nodeSeq)+";"+str(distAcc)+"\n")
                 lastNode = a_node
