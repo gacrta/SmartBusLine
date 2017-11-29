@@ -149,7 +149,7 @@ for i in range(25):
 #printPopulationStatus(populacao, 20)
 #printPopulationStatus(nextGeneration, 20)
 plotPopulationEvolution(populationData)
-ut.print_GTFS(nextGeneration)
+ut.print_GTFS([nextGeneration[0]])
 
 print("Done")
 
