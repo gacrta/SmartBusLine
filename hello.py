@@ -9,6 +9,7 @@ import individuals
 import operator, random, numpy, copy
 import matplotlib.pyplot as plt
 from route import RouteGenerator as rg
+import utils.utils as ut
 
 MUTATION_RATE = 0.01
 AVERAGE_SPEED = 7.22  # m/s = 26 km/h / 3.6
@@ -148,6 +149,7 @@ for i in range(25):
 #printPopulationStatus(populacao, 20)
 #printPopulationStatus(nextGeneration, 20)
 plotPopulationEvolution(populationData)
+ut.print_GTFS(nextGeneration)
 
 print("Done")
 

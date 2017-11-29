@@ -97,9 +97,9 @@ def print_gtfs_shapes_file(generation, allNodes):
             for i, a_node in enumerate(nodeList):
                 # first node doesn't need distance
                 if (i != 0):
-                    distAcc = last_node.getDistanceOfNode(a_node)
+                    distAcc+= last_node.getDistanceOfNode(a_node)
                     # last node doesn't have neighbor ahead
-                    if ( i < len(nodeList) - 1 ):
+                    if ( i < len(nodeList) ):
                         nll = last_node.getNeighborsLatLong(a_node) #neighbor_latlon_list
                         for j in range (0, len(nll), 2):
                             nodeSeq+=1
