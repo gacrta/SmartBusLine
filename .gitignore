@@ -8,4 +8,4 @@ __pycache__/
 *$py.class
 
 # image output. No need to commit that
-graphics.png
+graphics_*
