@@ -1,30 +1,13 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Oct 13 19:23:44 2017
-
-@author: Daniel
-"""
-
 
 import route
 import random
 import copy
 from node import NodeList as nl
 
-# gera Individuos -> x rotas dentro da USP
-# que passem por todos os seus nos e comece/
-# termine em algum dos terminais
-
-# http://mikegrouchy.com/blog/2012/05/be-pythonic-__init__py.html
-# https://stackoverflow.com/questions/448271/what-is-init-py-for?rq=1
-
-# https://pt.stackoverflow.com/questions/109013/quando-devo-usar-init-em-fun%C3%A7%C3%B5es-dentro-de-classes
-# https://stackoverflow.com/questions/625083/python-init-and-self-what-do-they-do
-# https://stackoverflow.com/questions/8609153/why-do-we-use-init-in-python-classes
-
 class Individuals:
 
-    numRoutes = 3 # pode ser alterado direto aqui
+    numRoutes = 3 # number of genes(routes) to each individual
     LACKING_NODE_PENALTY = 5
 
     def __init__(self, label=None, fitness=None, genes=None):
@@ -42,14 +25,12 @@ class Individuals:
         # FIM DO GERADOR
 
     def __str__(self):
-        print ("varias rota")
+        print ("Ind: " + self.getLabel())
 
     @staticmethod
     def createIndividual ():
         #allNodes = route.Route.Nodes + route.Route.Terminals # concatenates the 2 lists
-        newInd = [] # array de rotas
-
-        # assim eh muito mais facil
+        newInd = []
         while len(newInd) != (Individuals.numRoutes):
             # cria Rotas
             newRoute = route.RouteGenerator.getNewRoute("")
@@ -95,23 +76,9 @@ class Individuals:
             routeList.append(clonedRoute)
         return routeList
 
-    # passa uma lista de individuos p/ poder escolher RANDOM qual ind dara qual rota
-    # filhos serao sempre dois a dois? ou pode ter uns partos frutos de orgia?
-	 # TODO: PENSAR MELHOR EM COMO FAZER A REPRODUCAO
-	 # 1. (i) se o metodo recebe um par de pais ou (ii) se recebe a lista com todos
-    # 2. (i) se appenda parte uma rota de um pai na de outro ou (ii) se pega uma rota de cada pai
-	 # 3. (i) retorna um unico filho ou (ii) retorna a lista com a proxima geracao direto
-    @staticmethod
-    def reproduction1(ind1, ind2):
-        individualSon = []
-
-        return individualSon
-
     @staticmethod
     def reproduction2(popList):
 
-        # https://www.python-course.eu/python3_deep_copy.php
-        # tutorial copy/deepcopy ~ referencias
 
         newPopList = copy.copy(popList)
         # this loop shorts indList removing two of its ind by turn, until it
@@ -153,14 +120,9 @@ class Individuals:
         #if len(popList) == 1: newPopList.append (Individuals.mutation(popList.pop()))
         return newPopList
 
-		# TODO: COMO SERÁ A MUTAÇÃO? (i) um individuo com uma nova rota ou (ii) uma das rotas do individuo alterada?
-		# recebe o individuo a ser mutado
-    # estou tomando ind como um array; de array (rotas); de array (nos)
     @staticmethod
     def mutation(ind):
         indMutated = []
-        # TODO: foi implementado uma variacao do (i), em q pra cada rota antiga
-		  # ha 50% de chance de ela se manter e 50% de entrar um rota nova em seu lugar
         for i, e in enumerate(ind.genes):
             lucky = random.randint(1,2)
             if (lucky == 1):
@@ -169,30 +131,6 @@ class Individuals:
                 newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
                 indMutated.append(newRoute)
         return Individuals(ind.getLabel() + "M", None, indMutated)
-
-    """   
-  
-  # se dois a dois, repr recebe como parametro ind1, ind2, certo? ou faz um rand dentro de uma matriz
-  # de individuos e vai pegando e transando-os?
-	
-    # dada uma rota de N nos, pensei em usar um x=randint pra pegar um trecho de rota com x nos, 
-    # e outra com N-x nos, e depois ligar elas -> sendo obrigadas a fazerem sentido ou nao? (i.e.,
-    # o ultimo no de uma tem q ser vizinho do primeiro da outra?) 
-    # se nao fizer sentido, isso pode ser cortado na hora dos pesos/selecao (~fitness)
-    
-    # como a rota (cromossomo) eh um array, da pra criar o gene pegando esse array ateh o elemento x
-    #gene = []
-    #for i in random.randint(1,lentgh(cromossomo1)):
-    	#gene.append(cromossomo1[i])
-    #N = lentgh(cromossomo2)
-    #n = random.randint(1,N)
-    #for j in n:
-      #gene.append(cromossomo2[N-n+j])
-    
-    #newIndividual = gene1.extend(gene2)
-    
-    return newIndividual
-    """
 
     # sample method to evaluate fitness
     # returns the simple median of the lenght of individual routes

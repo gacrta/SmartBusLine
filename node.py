@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 class Node:
 
     def __init__(self, idx=0, label="",
@@ -39,11 +38,7 @@ class Node:
         if aNode.getIdx() in self.getNeighbors():
             dist = self.neighbors[aNode.getIdx()]
         else:
-            dist = 0
-        #elif aNode.getIdx() == self.getIdx():
-        #    dist = 0
-        #else:
-        #    dist = -1
+            dist = 0 # if aNode == self OR aNode not a neighbor
         return dist
     
     def getNeighborsLatLong(self, aNode):

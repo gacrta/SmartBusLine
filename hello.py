@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Sep 12 19:24:38 2017
-
-@author: gabri
-"""
 
 import individuals
 import operator, random, numpy, copy
@@ -237,24 +232,3 @@ plotPopulationEvolution(populationData)
 utils.print_GTFS([nextGeneration[0]])
 
 print("Done")
-
-
-"""
-# minimum gtfs files to create a shapefile in gis (like tutorial below)
-# (http://www.stevencanplan.com/2016/02/converting-a-transit-agencys-gtfs-to-shapefile-and-geojson-with-qgis/)
-
-# https://glenbambrick.com/2016/01/09/csv-to-shapefile-with-pyshp/
-
-import shapefile, csv
-def getWKT_PRJ (epsg_code):
- import urllib
- wkt = urllib.urlopen("http://spatialreference.org/ref/epsg/{0}/prettywkt/".format(epsg_code))
- remove_spaces = wkt.read().replace(" ","")
- output = remove_spaces.replace("\n", "")
- return output
-
-def printShapefile(generation):
-#TODO
-usp_shp = shapefile.Writer()
-
-"""
