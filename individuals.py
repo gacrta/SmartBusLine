@@ -32,35 +32,17 @@ class Individuals:
 
     def __init__(self, label=None, fitness=None, genes=None):
         self.label = label
-        if genes is None:
-            self.genes = Individuals.createIndividual()
-        else:
-            self.genes = genes
+        self.genes = genes
         self.fitness = 0
         # boolean that indicates if fitness need to be evaluated
         self.updated = False
         # list of useful data for plotting purposes
         # [meanTime, %direct, %withTransf, %unattended]
-        self.data=[0,0,0,0]
+        self.data=[0, 0, 0, 0]
         # FIM DO GERADOR
 
     def __str__(self):
         print ("varias rota")
-
-    @staticmethod
-    def createIndividual ():
-        newInd = [] # array de rotas
-
-        while len(newInd) != (Individuals.numRoutes):
-            # cria Rotas
-            newRoute = route.RouteGenerator.getNewRoute("")
-            newRouteIsUnique = True
-            for aRoute in newInd:
-                if aRoute.getString() == newRoute.getString():
-                    newRouteIsUnique = False
-            if (newRouteIsUnique):
-                newInd.append( newRoute )
-        return newInd
 
     # method to easily read individual contents
     def printIndividual(self):
@@ -69,22 +51,6 @@ class Individuals:
             aRoute.printRouteNodes()
             print(" - Route lenght: " + str(aRoute.getLenght()))
             print("")
-
-    # method that creates current USP bus situation
-    @staticmethod
-    def getCurrentIndividual():
-        uspBus = Individuals(label="Current USP", genes=[])
-        circ1List = [0, 4, 33, 26, 24, 22, 20, 19, 46, 48, 50, 52,
-                     54, 61, 56, 58, 43, 45, 59, 57, 16, 15, 27, 29,
-                     30, 28, 12, 11, 9, 7, 5, 3, 0]
-        circ2List = [0, 4, 6, 8, 10, 13, 14, 60, 17, 18, 21, 23, 25, 35, 36,
-                     38, 40, 55, 61, 53, 51, 49, 47, 44, 42,
-                     41, 39, 37, 34, 31, 32, 5, 3, 0]
-        circ1 = route.RouteGenerator.getRouteFromNodeList("Circ1", circ1List)
-        circ2 = route.RouteGenerator.getRouteFromNodeList("Circ2", circ2List)
-        uspBus.genes.append(circ1)
-        uspBus.genes.append(circ2)
-        return uspBus
 
     def getLabel(self):
         return self.label
@@ -114,7 +80,7 @@ class Individuals:
 
     # passa uma lista de individuos p/ poder escolher RANDOM qual ind dara qual rota
     # filhos serao sempre dois a dois? ou pode ter uns partos frutos de orgia?
-	 # TODO: PENSAR MELHOR EM COMO FAZER A REPRODUCAO
+    # TODO: PENSAR MELHOR EM COMO FAZER A REPRODUCAO
 	 # 1. (i) se o metodo recebe um par de pais ou (ii) se recebe a lista com todos
     # 2. (i) se appenda parte uma rota de um pai na de outro ou (ii) se pega uma rota de cada pai
 	 # 3. (i) retorna um unico filho ou (ii) retorna a lista com a proxima geracao direto
@@ -173,19 +139,6 @@ class Individuals:
 		# TODO: COMO SERÁ A MUTAÇÃO? (i) um individuo com uma nova rota ou (ii) uma das rotas do individuo alterada?
 		# recebe o individuo a ser mutado
     # estou tomando ind como um array; de array (rotas); de array (nos)
-    @staticmethod
-    def mutation(ind):
-        indMutated = []
-        # TODO: foi implementado uma variacao do (i), em q pra cada rota antiga
-		  # ha 50% de chance de ela se manter e 50% de entrar um rota nova em seu lugar
-        for i, e in enumerate(ind.genes):
-            lucky = random.randint(1,2)
-            if (lucky == 1):
-                indMutated.append(e)
-            else:
-                newRoute = route.RouteGenerator.getNewRoute( str(i+1) ) 
-                indMutated.append(newRoute)
-        return Individuals(ind.getLabel() + "M", None, indMutated)
 
     """   
   
@@ -402,10 +355,6 @@ class Individuals:
                 mRoutesWithNode.append(aRoute)
         return mRoutesWithNode
 
-    def getLackingNodes(self):
-        lenAllPossibleNodes = len(route.RouteGenerator.getAllNodes())
-        return lenAllPossibleNodes - len(self.getAllNodes())
-
     # returns a list of all nodes of this individual, without repetition
     def getAllNodes(self):
         mNodes = []
@@ -429,3 +378,59 @@ class Individuals:
         if time1 is not None and time1 is not None:
             return time1+time2+transferTime
         return None
+
+
+class IndividualCreator:
+
+    def __init__(self, numRoutes, routeGenerator):
+        self.mNumRoutes = numRoutes
+        self.mRouteGenerator = routeGenerator
+
+    # method that returns a full individual
+    def createIndividual(self, label):
+        routeArray = []  # a route array
+        newIndividual = Individuals(label)
+
+        while len(routeArray) != (self.mNumRoutes):
+            # cria Rotas
+            newRoute = self.mRouteGenerator.getNewRoute("")
+            newRouteIsUnique = True
+            for aRoute in routeArray:
+                if aRoute.getString() == newRoute.getString():
+                    newRouteIsUnique = False
+            if (newRouteIsUnique):
+                routeArray.append(newRoute)
+        newIndividual.genes = routeArray
+        return newIndividual
+
+    # method that counts nodes not attended by individual
+    def getLackingNodes(self, aIndividual):
+        lenAllPossibleNodes = len(self.mRouteGenerator.getAllNodes())
+        return lenAllPossibleNodes - len(aIndividual.getAllNodes())
+
+    # method that gets a individual and may return a mutated one
+    def mutation(self, ind):
+        indMutated = []
+        for i, e in enumerate(ind.genes):
+            lucky = random.randint(1, 2)
+            if (lucky == 1):
+                indMutated.append(e)
+            else:
+                newRoute = self.mRouteGenerator.getNewRoute(str(i+1))
+                indMutated.append(newRoute)
+        return Individuals(ind.getLabel() + "M", None, indMutated)
+
+    # method that creates current USP bus situation
+    def getCurrentIndividual(self):
+        uspBus = Individuals(label="Current USP", genes=[])
+        circ1List = [0, 4, 33, 26, 24, 22, 20, 19, 46, 48, 50, 52,
+                     54, 61, 56, 58, 43, 45, 59, 57, 16, 15, 27, 29,
+                     30, 28, 12, 11, 9, 7, 5, 3, 0]
+        circ2List = [0, 4, 6, 8, 10, 13, 14, 60, 17, 18, 21, 23, 25, 35, 36,
+                     38, 40, 55, 61, 53, 51, 49, 47, 44, 42,
+                     41, 39, 37, 34, 31, 32, 5, 3, 0]
+        circ1 = self.mRouteGenerator.getRouteFromNodeList("Circ1", circ1List)
+        circ2 = self.mRouteGenerator.getRouteFromNodeList("Circ2", circ2List)
+        uspBus.genes.append(circ1)
+        uspBus.genes.append(circ2)
+        return uspBus

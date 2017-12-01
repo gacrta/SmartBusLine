@@ -11,12 +11,20 @@ import random
 import numpy
 import matplotlib.pyplot as plt
 import copy
-from route import RouteGenerator as rg
+import route
 import utils.utils as utils
 
 MUTATION_RATE = 0.05
-AVERAGE_SPEED = 7.22  # m/s = 26 km/h / 3.6
+AVERAGE_SPEED = 5.94  # m/s = 21,4 km/h / 3.6
 TRANSFER_TIME = 10  # minutes
+
+USE_2_ROUTES = 2
+USE_3_ROUTES = 3
+USE_4_ROUTES = 4
+
+POPULATION_LENGHT = 20
+ITERATION_NUM = 10
+MAX_ROUTE_LEN = 30
 
 DATA_FITNESS = "fitness"
 DATA_MEAN_TIME = "meanTIme"
@@ -27,14 +35,14 @@ DATA_UNATTEND = "unattended"
 def printPopulationStatus(pop, iteration):
     print("Population Status for " + str(iteration) + " iteration:")
     for ind in pop:
-        #print ("Individual " + ind.getLabel() + ": " + str(ind.evalFitness()))
         msg = "Individual %(indLabel)s: %(fitness).2f"%{"indLabel":ind.getLabel(),"fitness":ind.fitness}
         print (msg)
 
 def populationSort(pop):
         return sorted(pop, key=operator.attrgetter("fitness"), reverse=True)
 
-def populationSelect(pop, tamPop):
+def populationSelect(pop):
+    tamPop = len(pop)
 
     popOver = sortedPop[ : int( tamPop/2 ) ] # takes highest half population...
     bestInd = popOver.pop(0)
@@ -177,13 +185,37 @@ def plotPopulationEvolution(dataStorage):
     plt.savefig("graphics_unattended.png")
 
 
-tamPop = 10  # pode ser alterado direto aqui
-populacao = []
-ind = []  # individuo
-routeArray = []
+# method that inits the population list
+def initPopulation(indCreator, population=None, popSize=POPULATION_LENGHT):
+    willReturn = False
+    if population is None:
+        population = []
+        willReturn = True
+    # creates individuals
+    for i in range(popSize):
+        ind = indCreator.createIndividual(str(i))
+        population.append(ind)
+    if willReturn:
+        return population
+
+
+# method that mutates random individuals
+def mutatePopulation(population, indCreator, mutationRate=MUTATION_RATE):
+    # preserves the first individual: elitism
+    popmut = random.sample(population[1:],
+                           int(len(population)*mutationRate))
+    for ind in popmut:
+        # mutating indiviuals
+        indmut = indCreator.mutation(ind)
+        population.remove(ind)
+        population.append(indmut)
+
+###################
+#  Script Starts  #
+###################
 
 # sample OD matrix
-# start, end, demand
+# [start, end, demand]
 od_data = utils.parseCsvODFile()
 
 # constants of eval
@@ -191,17 +223,20 @@ K1 = 10.0
 xm = 30.0
 K2 = 10.0
 K3 = 10.0
-minimumPath = rg.getFloydMinimumTime(AVERAGE_SPEED)
 
-# cria uma populacao
-for i in range(tamPop):
-    ind = individuals.Individuals(str(i))
-    populacao.append(ind)
+mRouteGenerator = route.RouteGenerator(MAX_ROUTE_LEN)
+minimumPath = mRouteGenerator.getFloydMinimumTime(AVERAGE_SPEED)
 
-nextGeneration = copy.copy(populacao)
+indCreator3 = individuals.IndividualCreator(USE_3_ROUTES, mRouteGenerator)
+#indCreator4 = individuals.IndividualCreator(USE_4_ROUTES, mRouteGenerator)
+
+pop3 = initPopulation(indCreator3)
+#pop4 = initPopulation(indCreator4)
+
+nextGeneration = copy.copy(pop3)
 populationData = []
 
-for i in range(2):
+for i in range(ITERATION_NUM):
     print ("- Starting iteration " + str(i))
     if (i % 2 == 0):
         print ("- Storing data of iteration " + str(i))
@@ -217,26 +252,19 @@ for i in range(2):
 
     # selects parental generation
     print ("- Selecting population at iteration " + str(i))
-    newGeneration = populationSelect(sortedPop, tamPop)
+    newGeneration = populationSelect(sortedPop)
 
     print ("- Reproducting population at iteration " + str(i))
     # completing nextGeneration by reproduction
     nextGeneration = individuals.Individuals.reproduction2(newGeneration)
 
     print ("- Mutating population at iteration " + str(i))
-    # selecting a sample for mutation
-    popmut = random.sample(nextGeneration[1:],
-                           int(len(nextGeneration)*MUTATION_RATE))
-    for ind in popmut:
-        # mutating indiviuals
-        indmut = individuals.Individuals.mutation(ind)
-        nextGeneration.remove(ind)
-        nextGeneration.append(indmut)
+    mutatePopulation(nextGeneration, indCreator3)
 
     print ("- End of iteration " + str(i))
 
 plotPopulationEvolution(populationData)
-uspBus = individuals.Individuals.getCurrentIndividual()
+uspBus = indCreator3.getCurrentIndividual()
 evalPopulation([uspBus], K1, xm, K2, K3, od_data,
                TRANSFER_TIME, minimumPath, AVERAGE_SPEED)
 
@@ -244,6 +272,6 @@ print str(nextGeneration[0].fitness) + " " + str(uspBus.fitness)
 
 print("Done")
 
-# https://stackoverflow.com/questions/7152762/how-to-redirect-print-output-to-a-file-using-python
-# http://www.pythonforbeginners.com/files/reading-and-writing-files-in-python
-# with open("exittest", "w")
+###################
+#   Script Ends   #
+###################
