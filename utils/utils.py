@@ -3,6 +3,36 @@
 import json
 import node
 import csv
+import logging
+
+LOGGING_TAG = "SmartBusLine"
+LOGGING_FORMAT = '[%(asctime)-15s] %(name)s:%(levelname)s: %(message)s'
+LOGGING_FILE_NAME = "all_events.log"
+
+
+# method that inits logger machine
+# based on: https://docs.python.org/2/howto/logging-cookbook.html
+def initLogger():
+    logger = logging.getLogger(LOGGING_TAG)
+    logger.setLevel(logging.DEBUG)
+    # create file handler which logs even debug messages
+    fh = logging.FileHandler(LOGGING_FILE_NAME, mode='w')
+    fh.setLevel(logging.DEBUG)
+    # create console handler with a higher log level
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter(LOGGING_FORMAT)
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    # add the handlers to the logger
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+
+
+# method that get a module log for application's classes
+def getLogger(mClassName):
+    return logging.getLogger(LOGGING_TAG+"."+mClassName)
 
 
 def readNodesJsonFile():

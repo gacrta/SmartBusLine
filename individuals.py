@@ -9,6 +9,7 @@ Created on Fri Oct 13 19:23:44 2017
 import route
 import random
 import copy
+import utils.utils as utils
 from node import NodeList as nl
 
 # http://mikegrouchy.com/blog/2012/05/be-pythonic-__init__py.html
@@ -39,6 +40,7 @@ class Individuals:
         # list of useful data for plotting purposes
         # [meanTime, %direct, %withTransf, %unattended]
         self.data=[0, 0, 0, 0]
+        self.mLogger = utils.getLogger(self.__class__.__name__)
         # FIM DO GERADOR
 
     def __str__(self):
@@ -95,7 +97,7 @@ class Individuals:
 
         # https://www.python-course.eu/python3_deep_copy.php
         # tutorial copy/deepcopy ~ referencias
-
+        self.mLogger.debug("Start individual reproduction.")
         newPopList = copy.copy(popList)
         # this loop shorts indList removing two of its ind by turn, until it
         # has 0 or 1 (and with 0/1 elem. could not use remove twice) elements
@@ -134,6 +136,7 @@ class Individuals:
                 del(newInd1)
                 del(newInd2)
         #if len(popList) == 1: newPopList.append (Individuals.mutation(popList.pop()))
+        self.mLogger.debug("End individual reproduction.")
         return newPopList
 
 		# TODO: COMO SERÁ A MUTAÇÃO? (i) um individuo com uma nova rota ou (ii) uma das rotas do individuo alterada?
@@ -192,6 +195,7 @@ class Individuals:
     # method that evaluates fitness as CHAKROBORTY
     def evalFitness3(self, K1, xm, K2, K3,
                      ODmatrix, transferTime, minimumPath, averageSpeed):
+        self.mLogger.debug("Start individual fitness evaluation.")
         solutions = self.evalIVT(ODmatrix, transferTime, averageSpeed)
 
         F1 = self.evalF1(solutions, K1, xm, minimumPath, averageSpeed)
@@ -200,9 +204,11 @@ class Individuals:
 
         self.fitness = F1+F2+F3
         self.updated = True
+        self.mLogger.debug("End individual fitness evaluation.")
 
     # evaluetes the time part of fitness
     def evalF1(self, solutions, K1, xm, minimumPath, averageSpeed):
+        self.mLogger.debug("Start F1 fitness evaluation.")
         attendedDemand = 0
         acumulatedF = 0
         acumulatedTime = 0
@@ -227,10 +233,12 @@ class Individuals:
         if attendedDemand == 0:
             return 0
         self.data[0] = acumulatedTime/attendedDemand
+        self.mLogger.debug("End F1 fitness evaluation.")
         return acumulatedF/attendedDemand
 
     # evaluetes the transfer part of fitness
     def evalF2(self, solutions, K2):
+        self.mLogger.debug("Start F2 fitness evaluation.")
         a = 3
         b = 1
         # K2/a <= b2 <= 2*K2/a
@@ -254,10 +262,12 @@ class Individuals:
         self.data[1] = float(attendedDirectly)/totalDemand
         self.data[2] = float(attendedWithTransfer)/totalDemand
         dT = (a*attendedDirectly + b*attendedWithTransfer)/totalDemand
+        self.mLogger.debug("End F2 fitness evaluation.")
         return ((K2 - b2*a)/(a**2))*(dT**2) + b2*dT
 
     # evaluetes the unattended demand part of fitness
     def evalF3(self, solutions, K3):
+        self.mLogger.debug("Start F3 fitness evaluation.")
         # - K3 <= b3 <= 0
         b3 = -K3/2
         unAttendedDemand = 0
@@ -272,10 +282,12 @@ class Individuals:
 
         dUn = float(unAttendedDemand)/totalDemand
         self.data[3] = dUn
+        self.mLogger.debug("End F3 fitness evaluation.")
         return -(b3 + K3)*(dUn**2) + b3*dUn + K3
 
     # evaluates the In Vehicle Travel time for each OD pair
     def evalIVT(self, ODmatrix, transferTime, averageSpeed):
+        self.mLogger.debug("Start IVT evaluation.")
         solutionsTime = []
         # Suppose that ODmatrix = [[startId, endId, demand], ...]
         for line in ODmatrix:
@@ -304,6 +316,7 @@ class Individuals:
                                                             averageSpeed)
 
             solutionsTime.append([startId, endId, demand, travelTime, transfer])
+        self.mLogger.debug("End IVT evaluation.")
         return solutionsTime
 
     def getTravelTime(self, originNode, originRouteList,
@@ -312,10 +325,12 @@ class Individuals:
 
         solutions = []  # list that contains solutions
 
+        self.mLogger.debug("Getting common routes.")
         # searches for common routes between [Ro] and [Rd]
         commonRoutes = route.RouteList.getCommonListElements(originRouteList,
                                                              destinationRouteList)
         if len(commonRoutes) != 0:
+            self.mLogger.debug("Evaluating time from common routes.")
             for solutionRoute in commonRoutes:
                 time = solutionRoute.evalRouteTime(originNode, destinationNode,
                                                    averageSpeed)
@@ -324,11 +339,13 @@ class Individuals:
                     solutions.append(time)
             if len(solutions) > 0:
                 return [min(solutions), False]
+        self.mLogger.debug("No common routes found.")
 
         # otherwise, search for common nodes between each element of [Ro]
         # and [Rd]
         for originRoute in originRouteList:
             for destinationRoute in destinationRouteList:
+                self.mLogger.debug("Getting common nodes for transfer.")
                 commonNodes = originRoute.getCommonNodes(destinationRoute)
                 for transferNode in commonNodes:
                     time = self.evalTransitTimeWithTransfer(transferNode,
@@ -342,8 +359,10 @@ class Individuals:
 
         # if a transfer node is found, return the smallest time
         if len(solutions) != 0:
+            self.mLogger.debug("Travel attended.")
             return [min(solutions), True]
 
+        self.mLogger.debug("Travel NOT attended.")
         # else, the demand is unattended
         return [-1, False]
 
@@ -385,9 +404,11 @@ class IndividualCreator:
     def __init__(self, numRoutes, routeGenerator):
         self.mNumRoutes = numRoutes
         self.mRouteGenerator = routeGenerator
+        self.mLogger = utils.getLogger(self.__class__.__name__)
 
     # method that returns a full individual
     def createIndividual(self, label):
+        self.mLogger.debug("Ind Creation starts.")
         routeArray = []  # a route array
         newIndividual = Individuals(label)
 
@@ -401,7 +422,11 @@ class IndividualCreator:
             if (newRouteIsUnique):
                 routeArray.append(newRoute)
         newIndividual.genes = routeArray
+        self.mLogger.debug("Ind Creation ends.")
         return newIndividual
+
+    def getNumRoutes(self):
+        return self.mNumRoutes
 
     # method that counts nodes not attended by individual
     def getLackingNodes(self, aIndividual):
@@ -410,6 +435,7 @@ class IndividualCreator:
 
     # method that gets a individual and may return a mutated one
     def mutation(self, ind):
+        self.mLogger.debug("Ind mutation starts.")
         indMutated = []
         for i, e in enumerate(ind.genes):
             lucky = random.randint(1, 2)
@@ -418,10 +444,12 @@ class IndividualCreator:
             else:
                 newRoute = self.mRouteGenerator.getNewRoute(str(i+1))
                 indMutated.append(newRoute)
+        self.mLogger.debug("Ind mutation ends.")
         return Individuals(ind.getLabel() + "M", None, indMutated)
 
     # method that creates current USP bus situation
     def getCurrentIndividual(self):
+        self.mLogger.debug("USP creation starts.")
         uspBus = Individuals(label="Current USP", genes=[])
         circ1List = [0, 4, 33, 26, 24, 22, 20, 19, 46, 48, 50, 52,
                      54, 61, 56, 58, 43, 45, 59, 57, 16, 15, 27, 29,
@@ -433,4 +461,5 @@ class IndividualCreator:
         circ2 = self.mRouteGenerator.getRouteFromNodeList("Circ2", circ2List)
         uspBus.genes.append(circ1)
         uspBus.genes.append(circ2)
+        self.mLogger.debug("USP creation ends.")
         return uspBus

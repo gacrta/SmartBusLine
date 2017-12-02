@@ -23,6 +23,7 @@ class Route:
         # route length: used to rank routes
         self.length = None
         self.string = None
+        self.mLogger = utils.getLogger(self.__class__.__name__)
 
     def __str__(self):
         return "Route object"
@@ -73,21 +74,25 @@ class Route:
 
     def evalRouteDistance(self, startNodeIdx=None, endNodeIdx=None):
         if len(self.nodes) == 0:
+            self.mLogger.debug("Route is empty.")
             return 0
         elif startNodeIdx is None:
+            self.mLogger.debug("Evaluating from first node to last node.")
             remainingNodes = self.nodes
         elif endNodeIdx is None:
+            self.mLogger.debug("Evaluating from middle node to last node.")
             startNode = self.getNodeById(startNodeIdx)
             startNodeInnerId = self.nodes.index(startNode)
             remainingNodes = self.nodes[startNodeInnerId:]
         else:
+            self.mLogger.debug("Evaluating from middle node to middle node.")
             startNode = self.getNodeById(startNodeIdx)
             startNodeInnerId = self.nodes.index(startNode)
             endNode = self.getNodeById(endNodeIdx)
             endNodeInnerId = self.nodes.index(endNode)
             remainingNodes = self.nodes[startNodeInnerId:endNodeInnerId+1]
         cDistance = 0
-        if len(remainingNodes)>0:
+        if len(remainingNodes) > 0:
             cNode = remainingNodes[0]
             for nextNode in remainingNodes[1:]:
                 cDistance += cNode.getDistanceOfNode(nextNode)
@@ -117,12 +122,12 @@ class Route:
         invalidNode = self.removeLastNode()
         invalidNodeIdx = invalidNode.getIdx()
         self.denyInvalidNode(invalidNodeIdx)
-        print ("Node " + invalidNode.getLabel() + " in invalid for route " + self.getLabel())
+        self.mLogger.debug("Node " + invalidNode.getLabel() + " in invalid for route " + self.getLabel())
 
     def printRouteNodes(self):
-        print ("Print route  " + self.label)
+        print("Print route  " + self.label)
         for aNode in self.nodes:
-            print (aNode.getLabel())
+            print(aNode.getLabel())
 
     # returns a string of route nodes
     def getString(self):
@@ -170,6 +175,7 @@ class RouteGenerator:
         [self.nodes, self.terminals] = utils.parseJsonString(jsonString)
         self.allNodes = self.terminals + self.nodes
         del(jsonString)
+        self.mLogger = utils.getLogger(self.__class__.__name__)
 
     # method that finds a node at data bank
     def findNodeByLabel(self, nodeLabel):
@@ -250,11 +256,11 @@ class RouteGenerator:
             # finds node from database
             aNode = self.findNodeById(key)
             aRoute.addNode(aNode)
-            print ("Node " + aNode.getLabel() + " added to route " + aRoute.getLabel())
+            self.mLogger.debug("Node " + aNode.getLabel() + " added to route " + aRoute.getLabel())
             return True
         else:
             # len(neighborList) == 0, no more valid neighbors
-            print ("No valid neighbors.")
+            self.mLogger.debug("No valid neighbors.")
             return False
 
     # receives a route and returns true if a valid route is created
@@ -264,21 +270,21 @@ class RouteGenerator:
             # Inits route with random terminal
             randomTerminal = random.choice(self.terminals)
             newRoute.addNode(randomTerminal)
-            print ("Terminal " + randomTerminal.getLabel() + " added to route " + newRoute.getLabel())
+            self.mLogger.debug("Terminal " + randomTerminal.getLabel() + " added to route " + newRoute.getLabel())
         elif (numberOfNodes == self.maxNumberOfNodes):
-            print ("Route " + newRoute.getLabel() + " ended max nodes")
+            self.mLogger.debug("Route " + newRoute.getLabel() + " ended max nodes")
             return False
         wasNodeAdded = self.addRandomNeighborNode(newRoute)
         if wasNodeAdded:
             if self.isRouteTerminalEnded(newRoute):
-                print ("Route " + newRoute.getLabel() + " ended with terminal " + newRoute.getLastNode().getLabel())
+                self.mLogger.debug("Route " + newRoute.getLabel() + " ended with terminal " + newRoute.getLastNode().getLabel())
                 return True
         else:
             if not self.isOnlyTerminalEnd:
                 # allows inner node ending
                 return True
             else:
-                print ("Route " + newRoute.getLabel() + " has no valid end. Deleting " + newRoute.getLastNode().getLabel())
+                self.mLogger.debug("Route " + newRoute.getLabel() + " has no valid end. Deleting " + newRoute.getLastNode().getLabel())
                 newRoute.denyLastNode()
         return self.startRandomRouteFromTerminal(newRoute)
 
@@ -290,11 +296,11 @@ class RouteGenerator:
         newRoute = None
         while not routeDone:
             if newRoute is not None:
-                print("An invalid route was created and abbandoned.")
+                self.mLogger.debug("An invalid route was created and abbandoned.")
                 del(newRoute)
             newRoute = Route(label)
             routeDone = self.startRandomRouteFromTerminal(newRoute)
-        print ("Route " + label + " is VALID.")
+        self.mLogger.debug("Route " + label + " is VALID.")
         newRoute.setLenght(newRoute.evalRouteDistance())
         return newRoute
 

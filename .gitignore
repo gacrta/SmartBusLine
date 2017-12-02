@@ -9,3 +9,6 @@ __pycache__/
 
 # image output. No need to commit that
 graphics_*
+
+# log output
+all_events.log
