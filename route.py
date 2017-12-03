@@ -77,15 +77,15 @@ class Route:
             self.mLogger.debug("Route is empty.")
             return 0
         elif startNodeIdx is None:
-            self.mLogger.debug("Evaluating from first node to last node.")
+            # self.mLogger.debug("Evaluating from first node to last node.")
             remainingNodes = self.nodes
         elif endNodeIdx is None:
-            self.mLogger.debug("Evaluating from middle node to last node.")
+            # self.mLogger.debug("Evaluating from middle node to last node.")
             startNode = self.getNodeById(startNodeIdx)
             startNodeInnerId = self.nodes.index(startNode)
             remainingNodes = self.nodes[startNodeInnerId:]
         else:
-            self.mLogger.debug("Evaluating from middle node to middle node.")
+            # self.mLogger.debug("Evaluating from middle node to middle node.")
             startNode = self.getNodeById(startNodeIdx)
             startNodeInnerId = self.nodes.index(startNode)
             endNode = self.getNodeById(endNodeIdx)
@@ -122,7 +122,8 @@ class Route:
         invalidNode = self.removeLastNode()
         invalidNodeIdx = invalidNode.getIdx()
         self.denyInvalidNode(invalidNodeIdx)
-        self.mLogger.debug("Node " + invalidNode.getLabel() + " in invalid for route " + self.getLabel())
+        self.mLogger.debug("Node " + invalidNode.getLabel() +
+                           " in invalid for route " + self.getLabel())
 
     def printRouteNodes(self):
         print("Print route  " + self.label)
@@ -256,7 +257,8 @@ class RouteGenerator:
             # finds node from database
             aNode = self.findNodeById(key)
             aRoute.addNode(aNode)
-            self.mLogger.debug("Node " + aNode.getLabel() + " added to route " + aRoute.getLabel())
+            self.mLogger.debug("Node " + aNode.getLabel() + " added to route "
+                               + aRoute.getLabel())
             return True
         else:
             # len(neighborList) == 0, no more valid neighbors
@@ -270,21 +272,27 @@ class RouteGenerator:
             # Inits route with random terminal
             randomTerminal = random.choice(self.terminals)
             newRoute.addNode(randomTerminal)
-            self.mLogger.debug("Terminal " + randomTerminal.getLabel() + " added to route " + newRoute.getLabel())
+            self.mLogger.debug("Terminal " + randomTerminal.getLabel() +
+                               " added to route " + newRoute.getLabel())
         elif (numberOfNodes == self.maxNumberOfNodes):
-            self.mLogger.debug("Route " + newRoute.getLabel() + " ended max nodes")
+            self.mLogger.debug("Route " + newRoute.getLabel() +
+                               " ended max nodes")
             return False
         wasNodeAdded = self.addRandomNeighborNode(newRoute)
         if wasNodeAdded:
             if self.isRouteTerminalEnded(newRoute):
-                self.mLogger.debug("Route " + newRoute.getLabel() + " ended with terminal " + newRoute.getLastNode().getLabel())
+                self.mLogger.debug("Route " + newRoute.getLabel() +
+                                   " ended with terminal " +
+                                   newRoute.getLastNode().getLabel())
                 return True
         else:
             if not self.isOnlyTerminalEnd:
                 # allows inner node ending
                 return True
             else:
-                self.mLogger.debug("Route " + newRoute.getLabel() + " has no valid end. Deleting " + newRoute.getLastNode().getLabel())
+                self.mLogger.debug("Route " + newRoute.getLabel() +
+                                   " has no valid end. Deleting " +
+                                   newRoute.getLastNode().getLabel())
                 newRoute.denyLastNode()
         return self.startRandomRouteFromTerminal(newRoute)
 

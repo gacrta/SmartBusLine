@@ -22,8 +22,8 @@ USE_2_ROUTES = 2
 USE_3_ROUTES = 3
 USE_4_ROUTES = 4
 
-POPULATION_LENGHT = 80
-ITERATION_NUM = 30
+POPULATION_LENGHT = 20
+ITERATION_NUM = 3
 MAX_ROUTE_LEN = 40
 
 # constants for evaluation step
@@ -105,7 +105,7 @@ def evalPopulation(population, K1, xm, K2, K3, od_data,
                    transferTime, minimumPath, averageSpeed):
     for ind in population:
         if (not ind.isUpdated()):
-            ind.evalFitness3(K1, xm, K2, K3, od_data,
+            ind.evalFitness(K1, xm, K2, K3, od_data,
                              transferTime, minimumPath, averageSpeed)
 
 
@@ -161,7 +161,8 @@ def plotPopulationEvolution(dataStorage, individualSize):
     plt.title("Best Scenario evolution")
     plt.legend(["Max", "Mean"])
     plt.grid()
-    plt.savefig("graphics_fitness_" + indSizeStr + ".png")
+    plt.savefig(utils.OS_IMAGES_PATH + "/" + "graphics_fitness_"
+                + indSizeStr + ".png")
 
     bestTime = dataArray[:, 5]
     meanTime = dataArray[:, 4]
@@ -173,7 +174,8 @@ def plotPopulationEvolution(dataStorage, individualSize):
     plt.title("Mean time evolution")
     plt.legend(["Best Scenario", "Population"])
     plt.grid()
-    plt.savefig("graphics_mean_time_" + indSizeStr + ".png")
+    plt.savefig(utils.OS_IMAGES_PATH + "/" + "graphics_mean_time_"
+                + indSizeStr + ".png")
 
     bestDirect = dataArray[:, 7]
     meanDirect = dataArray[:, 6]
@@ -191,7 +193,8 @@ def plotPopulationEvolution(dataStorage, individualSize):
     ax[0].legend(["Best Scenario", "Population"])
     ax[0].grid()
     ax[1].grid()
-    plt.savefig("graphics_travels_" + indSizeStr + ".png")
+    plt.savefig(utils.OS_IMAGES_PATH + "/" + "graphics_travels_"
+                + indSizeStr + ".png")
 
     bestUnattend = dataArray[:, 11]
     meanUnattend = dataArray[:, 10]
@@ -203,7 +206,51 @@ def plotPopulationEvolution(dataStorage, individualSize):
     plt.title("Best Scenario evolution")
     plt.legend(["Best Scenario", "Population"])
     plt.grid()
-    plt.savefig("graphics_unattended_" + indSizeStr + ".png")
+    plt.savefig(utils.OS_IMAGES_PATH + "/" + "graphics_unattended_"
+                + indSizeStr + ".png")
+
+
+def plotSolutionCompare(usp, ourSolutions):
+    sol2 = ourSolutions[0]
+    sol3 = ourSolutions[1]
+    sol4 = ourSolutions[2]
+    ourSolutions.append(usp)
+    xlabel = ["2 rotas", "3 rotas", "4 rotas", "USP atual"]
+    N = len(xlabel)
+    width = 0.4
+    fitnessData = [sol2.fitness, sol3.fitness, sol4.fitness, usp.fitness]
+    meanTimeData = [sol2.data[0], sol3.data[0], sol4.data[0], usp.data[0]]
+    transferInfo = [[sol2.data[1], sol3.data[1], sol4.data[1], usp.data[1]],
+                    [sol2.data[2], sol3.data[2], sol4.data[2], usp.data[2]]]
+    ind = numpy.arange(N)
+
+    plt.figure()
+    plt.bar(xlabel, fitnessData, width,
+            color=["red", "blue", "green", "cyan"])
+    plt.ylabel("Fitness value")
+    plt.title("Solutions comparison by Fitness")
+    plt.savefig(utils.OS_IMAGES_PATH + "/" + "bars_fitness.png")
+
+    plt.figure()
+    plt.bar(xlabel, meanTimeData, width,
+            color=["red", "blue", "green", "cyan"])
+    plt.ylabel("Mean Time (min)")
+    plt.title("Solutions comparison by Mean Time")
+    plt.savefig(utils.OS_IMAGES_PATH + "/" + "bars_mean_time.png")
+
+    plt.figure()
+    b1 = plt.bar(ind, transferInfo[0], width,
+                 color="red")
+    b2 = plt.bar(ind, transferInfo[1], width,
+                 color="blue",
+                 bottom=transferInfo[0])
+    plt.legend((b1[0], b2[0]), ('Direct', 'Indirect'))
+    plt.ylabel("Type of Travel (%)")
+
+    plt.xticks(ind, xlabel)
+
+    plt.title("Solutions comparison by type of travel")
+    plt.savefig(utils.OS_IMAGES_PATH + "/" + "bars_mean_time.png")
 
 
 # method that inits the population list
@@ -236,6 +283,7 @@ def mutatePopulation(population, indCreator, mutationRate=MUTATION_RATE):
 #  Script Starts  #
 ###################
 
+utils.initFoldersPath()
 utils.initLogger()
 mLogger = utils.getLogger("main")
 mLogger.info("Script started!")
@@ -262,7 +310,7 @@ indCreatorList = [indCreator2, indCreator3, indCreator4]
 mLogger.debug("IndividualCreators created")
 
 mLogger.debug("Init Population list")
-pop2 = initPopulation(indCreator3)
+pop2 = initPopulation(indCreator2)
 pop3 = initPopulation(indCreator3)
 pop4 = initPopulation(indCreator4)
 mPopList = [pop2, pop3, pop4]
@@ -279,10 +327,11 @@ mBestSolutions = []
 for pop in mPopList:
 
     nextGeneration = copy.copy(pop)
-    indCreator = indCreatorList[mPopList.index(pop)]
+    thisIdx = mPopList.index(pop)
+    indCreator = indCreatorList[thisIdx]
     populationData = []
 
-    mLogger.info("Optimization for population " + str(mPopList.index(pop)) + " started.")
+    mLogger.info("Optimization for population " + str(thisIdx) + " started.")
     for i in range(ITERATION_NUM):
         mLogger.info("Starting iteration " + str(i))
         if (i % 2 == 0):
@@ -290,31 +339,39 @@ for pop in mPopList:
             popArray = getPopulationArray(nextGeneration)
             storePopulationData(populationData, popArray, i)
 
-        mLogger.info("Evaluating population at iteration " + str(i))
+        mLogger.info("Evaluating population " + str(thisIdx) +
+                     " at iteration " + str(i))
         evalPopulation(nextGeneration, K1, xm, K2, K3, od_data,
                        TRANSFER_TIME, minimumPath, AVERAGE_SPEED)
 
-        mLogger.info("Sorting population at iteration " + str(i))
+        mLogger.info("Sorting population " + str(thisIdx) +
+                     " at iteration " + str(i))
         sortedPop = populationSort(nextGeneration)
 
         # selects parental generation
-        mLogger.info("Selecting population at iteration " + str(i))
+        mLogger.info("Selecting population " + str(thisIdx) +
+                     " at iteration " + str(i))
         newGeneration = populationSelect(sortedPop)
 
-        mLogger.info("Reproducting population at iteration " + str(i))
+        mLogger.info("Reproducting population " + str(thisIdx) +
+                     " at iteration " + str(i))
         # completing nextGeneration by reproduction
-        nextGeneration = individuals.Individuals.reproduction2(newGeneration)
+        nextGeneration = indCreator.reproduction(newGeneration)
 
-        mLogger.info("Mutating population at iteration " + str(i))
+        mLogger.info("Mutating population " + str(thisIdx) +
+                     " at iteration " + str(i))
         mutatePopulation(nextGeneration, indCreator)
 
         mLogger.info("End of iteration " + str(i))
 
-    mLogger.info("Optimization for population " + str(mPopList.index(pop)) + " ended.")
+    mLogger.info("Optimization for population " +
+                 str(mPopList.index(pop)) + " ended.")
 
-    mLogger.debug("Producing graphics for population " + str(mPopList.index(pop)) + "...")
+    mLogger.debug("Producing graphics for population " +
+                  str(mPopList.index(pop)) + "...")
     plotPopulationEvolution(populationData, indCreator.getNumRoutes())
-    mLogger.debug("Done producing graphics for population " + str(mPopList.index(pop)))
+    mLogger.debug("Done producing graphics for population " +
+                  str(mPopList.index(pop)))
 
     mBestSolutions.append(nextGeneration[0])
 
