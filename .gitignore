@@ -15,3 +15,7 @@ images/*
 
 # log output. No need to commit it
 log/all_events.log
+
+# gtfs files
+data/shapes.txt
+data/stops.txt
