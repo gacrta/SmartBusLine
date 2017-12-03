@@ -211,7 +211,8 @@ class RouteGenerator:
         neighborhood = lastNode.getNeighbors()
         for neighbor in neighborhood:
             neighborNode = aRoute.getNodeById(neighbor)
-            # denys existing inner nodes and invalid ones, but adds a terminal neighbor
+            # denys existing inner nodes and invalid ones,
+            # but adds a terminal neighbor
             if (((neighborNode is None) or
                  (self.isNodeOnList(neighborNode, self.terminals))) and
                  (neighbor not in aRoute.invalid)):

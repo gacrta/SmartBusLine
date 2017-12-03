@@ -97,7 +97,7 @@ def evalPopulation(population, K1, xm, K2, K3, od_data,
     for ind in population:
         if (not ind.isUpdated()):
             ind.evalFitness(K1, xm, K2, K3, od_data,
-                             transferTime, minimumPath, averageSpeed)
+                            transferTime, minimumPath, averageSpeed)
 
 
 def storePopulationData(dataStorage, popArray, iteration):
@@ -367,9 +367,12 @@ for pop in mPopList:
     mLogger.debug("Done producing graphics for population " +
                   str(mPopList.index(pop)))
 
+    mLogger.info("Storing best individual")
     mBestSolutions.append(nextGeneration[0])
-    utils.print_GTFS([nextGeneration[0]])
+    mLogger.info("Generating GTFS for best individual")
+    utils.print_GTFS([nextGeneration[0]], mRouteGenerator.getAllNodes(), thisIdx)
 
+plotSolutionCompare(uspBus, mBestSolutions)
 mLogger.info("Script Finished!")
 
 ###################

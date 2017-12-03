@@ -13,6 +13,7 @@ LOGGING_FILE_NAME = "all_events.log"
 OS_LOG_PATH = "log"
 OS_IMAGES_PATH = "images"
 
+
 # method that inits logger machine
 # based on: https://docs.python.org/2/howto/logging-cookbook.html
 def initLogger():
@@ -48,6 +49,7 @@ def initFoldersPath():
     except WindowsError:
         pass
 
+
 def readNodesJsonFile():
     """ read data/nodes.json file from this project """
     fileName = "data/nodes.json"
@@ -78,57 +80,68 @@ def parseJsonString(jsonString):
                                    jsonNode['neighbors_latlong']))
     return [nodes, terminals]
 
-def print_GTFS (generation):
-    
-    jsonStr = readNodesJsonFile()
-    [Nodes, Terminals] = parseJsonString(jsonStr)
-    allNodes = Terminals + Nodes
-    print_gtfs_stops_file(generation, allNodes)
-    print_gtfs_shapes_file(generation, allNodes)
-       
+
+def print_GTFS(generation, allNodes, idx):
+
+    print_gtfs_stops_file(generation, allNodes, idx)
+    print_gtfs_shapes_file(generation, allNodes, idx)
+
+
 # create a file stops.txt (save bus stops and its infos)
 # must have points_ID, points_lat, points_lon at least
-def print_gtfs_stops_file(generation, allNodes):
-    stops = open("data/stops.txt","w")
+def print_gtfs_stops_file(generation, allNodes, idx):
+    # population type: 2, 3 or 4 routes/individual
+    popType = idx + 2
+    stops = open("data/stops_" + str(popType) + ".txt", "w")
     stops.write("stop_id,\"stop_name\",\"stop_desc\",stop_lat,stop_lon,stop_url,location_type,parent_station\n")
     for a_node in allNodes:
         id, name, latlon = a_node.getIdx(), a_node.getLabel(), a_node.getLatLong()
         prtname = "\"%s\"" % name
-        string = (str(id)+","+prtname+","+","+str(latlon[0])+","+str(latlon[1])+","+","+","+"\n")
+        string = (str(id) + "," + prtname + "," + "," +
+                  str(latlon[0]) + "," + str(latlon[1]) + "," +
+                  "," + "," + "\n")
         stops.writelines(string)
     stops.close()
 
+
 # create a file shapes.txt (save bus lines and its infos)
 # must have points_ID, points_lat, points_lon at least
-def print_gtfs_shapes_file(generation, allNodes):
+def print_gtfs_shapes_file(generation, allNodes, idx):
+    # population type: 2, 3 or 4 routes/individual
+    popType = idx + 2
     routeIndex = 0
-    shapes = open('data/shapes.txt', 'w')
+    shapes = open("data/shapes_" + str(popType) + ".txt", 'w')
     shapes.write("shape_id,shape_pt_lat,shape_pt_lon,shape_pt_sequence,shape_dist_traveled\n")
     for individual in generation:
         routeList = individual.getGenes()
         for rt in routeList:
             nodeList = rt.getNodes()
-            routeIndex+=1
+            routeIndex += 1
             nodeSeq, distAcc = 0, 0
-            last_node=""
+            last_node = ""
             for i, a_node in enumerate(nodeList):
                 # first node doesn't need distance
                 if (i != 0):
-                    distAcc+= last_node.getDistanceOfNode(a_node)
+                    distAcc += last_node.getDistanceOfNode(a_node)
                     # last node doesn't have neighbor ahead
-                    if ( i < len(nodeList) ):
-                        nll = last_node.getNeighborsLatLong(a_node) #neighbor_latlon_list
-                        for j in range (0, len(nll), 2):
-                            nodeSeq+=1
-                            string=(str(routeIndex)+","+str(nll[j])+","+str(nll[j+1])+","+str(nodeSeq)+","+"\n")
+                    if (i < len(nodeList)):
+                        # neighbor_latlon_list
+                        nll = last_node.getNeighborsLatLong(a_node)
+                        for j in range(0, len(nll), 2):
+                            nodeSeq += 1
+                            string = (str(routeIndex) + "," + str(nll[j]) +
+                                      "," + str(nll[j+1]) + "," +
+                                      str(nodeSeq) + "," + "\n")
                             shapes.writelines(string)
                 latlon = a_node.getLatLong()
-                nodeSeq+=1
-                string=(str(routeIndex)+","+str(latlon[0])+","+str(latlon[1])+","+str(nodeSeq)+","+str(distAcc)+"\n")
+                nodeSeq += 1
+                string = (str(routeIndex) + "," + str(latlon[0]) + "," +
+                          str(latlon[1]) + "," + str(nodeSeq) + "," +
+                          str(distAcc)+"\n")
                 last_node = a_node
                 shapes.writelines(string)
     shapes.close()
-    
+
 
 # method that reads OD info from .csv file
 def parseCsvODFile():
