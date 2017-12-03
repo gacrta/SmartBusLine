@@ -211,18 +211,16 @@ def plotPopulationEvolution(dataStorage, individualSize):
 
 
 def plotSolutionCompare(usp, ourSolutions):
-    sol2 = ourSolutions[0]
-    sol3 = ourSolutions[1]
-    sol4 = ourSolutions[2]
-    ourSolutions.append(usp)
-    xlabel = ["2 rotas", "3 rotas", "4 rotas", "USP atual"]
-    N = len(xlabel)
+    sol2 = ourSolutions[0]  # solution with 2 routes
+    sol3 = ourSolutions[1]  # solution with 3 routes
+    sol4 = ourSolutions[2]  # solution with 4 routes
+    xlabel = ["2 routes", "3 routes", "4 routes", "today USP"]
     width = 0.4
     fitnessData = [sol2.fitness, sol3.fitness, sol4.fitness, usp.fitness]
     meanTimeData = [sol2.data[0], sol3.data[0], sol4.data[0], usp.data[0]]
     transferInfo = [[sol2.data[1], sol3.data[1], sol4.data[1], usp.data[1]],
                     [sol2.data[2], sol3.data[2], sol4.data[2], usp.data[2]]]
-    ind = numpy.arange(N)
+    unattendedDemand = [sol2.data[3], sol3.data[3], sol4.data[3], usp.data[3]]
 
     plt.figure()
     plt.bar(xlabel, fitnessData, width,
@@ -239,18 +237,23 @@ def plotSolutionCompare(usp, ourSolutions):
     plt.savefig(utils.OS_IMAGES_PATH + "/" + "bars_mean_time.png")
 
     plt.figure()
-    b1 = plt.bar(ind, transferInfo[0], width,
+    b1 = plt.bar(xlabel, transferInfo[0], width,
                  color="red")
-    b2 = plt.bar(ind, transferInfo[1], width,
+    b2 = plt.bar(xlabel, transferInfo[1], width,
                  color="blue",
                  bottom=transferInfo[0])
     plt.legend((b1[0], b2[0]), ('Direct', 'Indirect'))
     plt.ylabel("Type of Travel (%)")
 
-    plt.xticks(ind, xlabel)
-
     plt.title("Solutions comparison by type of travel")
-    plt.savefig(utils.OS_IMAGES_PATH + "/" + "bars_mean_time.png")
+    plt.savefig(utils.OS_IMAGES_PATH + "/" + "bars_travel_type.png")
+
+    plt.figure()
+    plt.bar(xlabel, unattendedDemand, width,
+            color=["red", "blue", "green", "cyan"])
+    plt.ylabel("Unattended Demand (%)")
+    plt.title("Solutions comparison by unattended demmand")
+    plt.savefig(utils.OS_IMAGES_PATH + "/" + "bars_unattended_demand.png")
 
 
 # method that inits the population list
