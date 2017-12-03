@@ -3,9 +3,15 @@
 
 __pycache__/
 
+# Spyder Project structure
+.spyproject/
+
 *.py[cod]
 
 *$py.class
 
 # image output. No need to commit that
-graphics_*
+images/*
+
+# log output. No need to commit it
+log/all_events.log

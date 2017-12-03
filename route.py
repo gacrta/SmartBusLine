@@ -23,6 +23,7 @@ class Route:
         # route length: used to rank routes
         self.length = None
         self.string = None
+        self.mLogger = utils.getLogger(self.__class__.__name__)
 
     def __str__(self):
         return "Route object"
@@ -73,21 +74,25 @@ class Route:
 
     def evalRouteDistance(self, startNodeIdx=None, endNodeIdx=None):
         if len(self.nodes) == 0:
+            self.mLogger.debug("Route is empty.")
             return 0
         elif startNodeIdx is None:
+            # self.mLogger.debug("Evaluating from first node to last node.")
             remainingNodes = self.nodes
         elif endNodeIdx is None:
+            # self.mLogger.debug("Evaluating from middle node to last node.")
             startNode = self.getNodeById(startNodeIdx)
             startNodeInnerId = self.nodes.index(startNode)
             remainingNodes = self.nodes[startNodeInnerId:]
         else:
+            # self.mLogger.debug("Evaluating from middle node to middle node.")
             startNode = self.getNodeById(startNodeIdx)
             startNodeInnerId = self.nodes.index(startNode)
             endNode = self.getNodeById(endNodeIdx)
             endNodeInnerId = self.nodes.index(endNode)
             remainingNodes = self.nodes[startNodeInnerId:endNodeInnerId+1]
         cDistance = 0
-        if len(remainingNodes)>0:
+        if len(remainingNodes) > 0:
             cNode = remainingNodes[0]
             for nextNode in remainingNodes[1:]:
                 cDistance += cNode.getDistanceOfNode(nextNode)
@@ -117,35 +122,13 @@ class Route:
         invalidNode = self.removeLastNode()
         invalidNodeIdx = invalidNode.getIdx()
         self.denyInvalidNode(invalidNodeIdx)
-        print ("Node " + invalidNode.getLabel() + " in invalid for route " + self.getLabel())
-
-    # returns true if route is terminal ended
-    def isTerminalEnded(self):
-        lastNode = self.getLastNode()
-        if RouteGenerator.isNodeOnList(lastNode,
-                                       RouteGenerator.Terminals):
-            return True
-        return False
+        self.mLogger.debug("Node " + invalidNode.getLabel() +
+                           " in invalid for route " + self.getLabel())
 
     def printRouteNodes(self):
-        print ("Print route  " + self.label)
+        print("Print route  " + self.label)
         for aNode in self.nodes:
-            print (aNode.getLabel())
-
-    # returns a list of available nodes of last neighbor
-    def getValidNeighbors(self):
-        validNodes = []
-        lastNode = self.getLastNode()
-        neighborhood = lastNode.getNeighbors()
-        for neighbor in neighborhood:
-            neighborNode = self.getNodeById(neighbor)
-            # denys existing inner nodes and invalid ones, but adds a terminal neighbor
-            if (((neighborNode is None) or
-                 (RouteGenerator.isNodeOnList(neighborNode,
-                                              RouteGenerator.Terminals))) and
-                 (neighbor not in self.invalid)):
-                validNodes.append(neighbor)
-        return validNodes
+            print(aNode.getLabel())
 
     # returns a string of route nodes
     def getString(self):
@@ -184,117 +167,160 @@ class Route:
 
 
 class RouteGenerator:
-    """ Static class used to create Route objects """
+    """ Class used to create Route objects """
 
-    MAX_NUMBER_OF_NODES = 25
-    ONLY_TERMINAL_ENDING = True
+    def __init__(self, maxNumberOfNodes, isOnlyTerminalEnd=True):
+        self.maxNumberOfNodes = maxNumberOfNodes
+        self.isOnlyTerminalEnd = isOnlyTerminalEnd
+        jsonString = utils.readNodesJsonFile()
+        [self.nodes, self.terminals] = utils.parseJsonString(jsonString)
+        self.allNodes = self.terminals + self.nodes
+        del(jsonString)
+        self.mLogger = utils.getLogger(self.__class__.__name__)
 
-    jsonString = utils.readNodesJsonFile()
-    [Nodes, Terminals] = utils.parseJsonString(jsonString)
-    del(jsonString)
-
-    # static method that finds a node at data bank
-    @staticmethod
-    def findNodeByLabel(nodeLabel):
-        # concatenates the 2 lists
-        allNodes = RouteGenerator.Nodes + RouteGenerator.Terminals
-        for aNode in allNodes:
+    # method that finds a node at data bank
+    def findNodeByLabel(self, nodeLabel):
+        for aNode in self.allNodes:
             if aNode.getLabel() == nodeLabel:
                 return aNode
 
-    # static method that finds a node at data bank by idx
-    @staticmethod
-    def findNodeById(nodeId):
-        # concatenates the 2 lists
-        allNodes = RouteGenerator.Nodes + RouteGenerator.Terminals
-        for aNode in allNodes:
+    # method that finds a node at data bank by idx
+    def findNodeById(self, nodeId):
+        for aNode in self.allNodes:
             if aNode.getIdx() == nodeId:
                 return aNode
 
     # returns true if a interest node is in a interest list of nodes
-    @staticmethod
-    def isNodeOnList(interestNode, interestList):
+    def isNodeOnList(self, interestNode, interestList):
         for aNode in interestList:
             if aNode.getIdx() == interestNode.getIdx():
                 return True
         return False
 
-    @staticmethod
-    def getAllNodes():
-        return RouteGenerator.Terminals + RouteGenerator.Nodes
+    # returns true if route is terminal ended
+    def isRouteTerminalEnded(self, aRoute):
+        lastRouteNode = aRoute.getLastNode()
+        if self.isNodeOnList(lastRouteNode, self.terminals):
+            return True
+        return False
+
+    # returns a list of available nodes of route's last node
+    def getRouteValidNeighbors(self, aRoute):
+        validNodes = []
+        lastNode = aRoute.getLastNode()
+        neighborhood = lastNode.getNeighbors()
+        for neighbor in neighborhood:
+            neighborNode = aRoute.getNodeById(neighbor)
+            # denys existing inner nodes and invalid ones, but adds a terminal neighbor
+            if (((neighborNode is None) or
+                 (self.isNodeOnList(neighborNode, self.terminals))) and
+                 (neighbor not in aRoute.invalid)):
+                validNodes.append(neighbor)
+        return validNodes
+
+    # returns all nodes list
+    def getAllNodes(self):
+        return self.allNodes
+
+    # returns a route composed by a list of node ids
+    def getRouteFromNodeList(self, routeLabel, nodeIdList):
+        newRoute = Route(routeLabel)
+        for aNodeId in nodeIdList:
+            thisNode = self.findNodeById(aNodeId)
+            if len(newRoute.nodes) == 0:
+                if (thisNode in self.terminals):
+                    newRoute.addNode(thisNode)
+                else:
+                    raise ValueError("The node " + thisNode.getLabel() +
+                                     " is not a Terminal.")
+            elif(aNodeId != nodeIdList[-1]):
+                validNeighbors = self.getRouteValidNeighbors(newRoute)
+                if (aNodeId in validNeighbors):
+                    newRoute.addNode(thisNode)
+                else:
+                    raise ValueError("The node " + thisNode.getLabel() +
+                                     " is not a valid neighbor of " +
+                                     newRoute.getLastNode().getLabel())
+            else:
+                validNeighbors = self.getRouteValidNeighbors(newRoute)
+                if ((aNodeId in validNeighbors) and (thisNode in self.terminals)):
+                    newRoute.addNode(thisNode)
+        return newRoute
 
     # adds a random neighbor to a given route. returns true if
     # succeeds and false otherwise
-    @staticmethod
-    def addRandomNeighborNode(aRoute):
-        neighborList = aRoute.getValidNeighbors()
+    def addRandomNeighborNode(self, aRoute):
+        neighborList = self.getRouteValidNeighbors(aRoute)
         if len(neighborList) != 0:
             # picks a random neighbor label from last node
             key = random.choice(neighborList)
             # finds node from database
-            aNode = RouteGenerator.findNodeById(key)
+            aNode = self.findNodeById(key)
             aRoute.addNode(aNode)
-            print ("Node " + aNode.getLabel() + " added to route " + aRoute.getLabel())
+            self.mLogger.debug("Node " + aNode.getLabel() + " added to route "
+                               + aRoute.getLabel())
             return True
         else:
             # len(neighborList) == 0, no more valid neighbors
-            print ("No valid neighbors.")
+            self.mLogger.debug("No valid neighbors.")
             return False
 
     # receives a route and returns true if a valid route is created
-    @staticmethod
-    def startRandomRouteFromTerminal(newRoute):
+    def startRandomRouteFromTerminal(self, newRoute):
         numberOfNodes = newRoute.getNumberOfNodes()
         if (numberOfNodes == 0):
             # Inits route with random terminal
-            randomTerminal = random.choice(RouteGenerator.Terminals)
+            randomTerminal = random.choice(self.terminals)
             newRoute.addNode(randomTerminal)
-            print ("Terminal " + randomTerminal.getLabel() + " added to route " + newRoute.getLabel())
-        elif (numberOfNodes == RouteGenerator.MAX_NUMBER_OF_NODES):
-            print ("Route " + newRoute.getLabel() + " ended max nodes")
+            self.mLogger.debug("Terminal " + randomTerminal.getLabel() +
+                               " added to route " + newRoute.getLabel())
+        elif (numberOfNodes == self.maxNumberOfNodes):
+            self.mLogger.debug("Route " + newRoute.getLabel() +
+                               " ended max nodes")
             return False
-        wasNodeAdded = RouteGenerator.addRandomNeighborNode(newRoute)
+        wasNodeAdded = self.addRandomNeighborNode(newRoute)
         if wasNodeAdded:
-            if newRoute.isTerminalEnded():
-                print ("Route " + newRoute.getLabel() + " ended with terminal " + newRoute.getLastNode().getLabel())
+            if self.isRouteTerminalEnded(newRoute):
+                self.mLogger.debug("Route " + newRoute.getLabel() +
+                                   " ended with terminal " +
+                                   newRoute.getLastNode().getLabel())
                 return True
         else:
-            if not RouteGenerator.ONLY_TERMINAL_ENDING:
+            if not self.isOnlyTerminalEnd:
                 # allows inner node ending
                 return True
             else:
-                print ("Route " + newRoute.getLabel() + " has no valid end. Deleting " + newRoute.getLastNode().getLabel())
+                self.mLogger.debug("Route " + newRoute.getLabel() +
+                                   " has no valid end. Deleting " +
+                                   newRoute.getLastNode().getLabel())
                 newRoute.denyLastNode()
-        return RouteGenerator.startRandomRouteFromTerminal(newRoute)
+        return self.startRandomRouteFromTerminal(newRoute)
 
     # method that returns a valid route
-    @staticmethod
-    def getNewRoute(label=""):
+    def getNewRoute(self, label=""):
         if (label == ""):
             label = "sample route"
         routeDone = False
         newRoute = None
         while not routeDone:
             if newRoute is not None:
-                print("An invalid route was created and abbandoned.")
+                self.mLogger.debug("An invalid route was created and abbandoned.")
                 del(newRoute)
             newRoute = Route(label)
-            routeDone = RouteGenerator.startRandomRouteFromTerminal(newRoute)
-        print ("Route " + label + " is VALID.")
+            routeDone = self.startRandomRouteFromTerminal(newRoute)
+        self.mLogger.debug("Route " + label + " is VALID.")
         newRoute.setLenght(newRoute.evalRouteDistance())
         return newRoute
 
     # method that returns the minimum path matrix
-    @staticmethod
-    def getFloydMinimumTime(averageSpeed):
-        allNodes = RouteGenerator.getAllNodes()
+    def getFloydMinimumTime(self, averageSpeed):
         inf = 100000  # value bigger than any distance
 
         # init matrix with all neighbors distance
         minDistMatrix = []
-        for rowNode in allNodes:
+        for rowNode in self.allNodes:
             line = []
-            for columnNode in allNodes:
+            for columnNode in self.allNodes:
                 dist = rowNode.getDistanceOfNode(columnNode)
                 # if dist = -1, the nodes are not neighbors
                 if dist == -1:
@@ -303,7 +329,7 @@ class RouteGenerator:
             minDistMatrix.append(line)
 
         # evaluate floyd minimum path
-        N = len(allNodes)
+        N = len(self.allNodes)
         for k in range(N):
             for i in range(N):
                 for j in range(N):
