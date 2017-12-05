@@ -13,8 +13,8 @@ USE_2_ROUTES = 2
 USE_3_ROUTES = 3
 USE_4_ROUTES = 4
 
-POPULATION_LENGHT = 20
-ITERATION_NUM = 3
+POPULATION_LENGHT = 80
+ITERATION_NUM = 10
 MAX_ROUTE_LEN = 40
 
 # constants for evaluation step
@@ -206,6 +206,8 @@ def plotSolutionCompare(usp, ourSolutions):
     sol3 = ourSolutions[1]  # solution with 3 routes
     sol4 = ourSolutions[2]  # solution with 4 routes
     xlabel = ["2 routes", "3 routes", "4 routes", "today USP"]
+    N = len(xlabel)
+    ind = numpy.arange(N)
     width = 0.4
     fitnessData = [sol2.fitness, sol3.fitness, sol4.fitness, usp.fitness]
     meanTimeData = [sol2.data[0], sol3.data[0], sol4.data[0], usp.data[0]]
@@ -214,36 +216,39 @@ def plotSolutionCompare(usp, ourSolutions):
     unattendedDemand = [sol2.data[3], sol3.data[3], sol4.data[3], usp.data[3]]
 
     plt.figure()
-    plt.bar(xlabel, fitnessData, width,
+    plt.bar(ind, fitnessData, width,
             color=["red", "blue", "green", "cyan"])
     plt.ylabel("Fitness value")
     plt.title("Solutions comparison by Fitness")
+    plt.xticks(ind, xlabel)
     plt.savefig(utils.OS_IMAGES_PATH + "/" + "bars_fitness.png")
 
     plt.figure()
-    plt.bar(xlabel, meanTimeData, width,
+    plt.bar(ind, meanTimeData, width,
             color=["red", "blue", "green", "cyan"])
     plt.ylabel("Mean Time (min)")
     plt.title("Solutions comparison by Mean Time")
+    plt.xticks(ind, xlabel)
     plt.savefig(utils.OS_IMAGES_PATH + "/" + "bars_mean_time.png")
 
     plt.figure()
-    b1 = plt.bar(xlabel, transferInfo[0], width,
+    b1 = plt.bar(ind, transferInfo[0], width,
                  color="red")
-    b2 = plt.bar(xlabel, transferInfo[1], width,
+    b2 = plt.bar(ind, transferInfo[1], width,
                  color="blue",
                  bottom=transferInfo[0])
     plt.legend((b1[0], b2[0]), ('Direct', 'Indirect'))
     plt.ylabel("Type of Travel (%)")
-
+    plt.xticks(ind, xlabel)
     plt.title("Solutions comparison by type of travel")
     plt.savefig(utils.OS_IMAGES_PATH + "/" + "bars_travel_type.png")
 
     plt.figure()
-    plt.bar(xlabel, unattendedDemand, width,
+    plt.bar(ind, unattendedDemand, width,
             color=["red", "blue", "green", "cyan"])
     plt.ylabel("Unattended Demand (%)")
     plt.title("Solutions comparison by unattended demmand")
+    plt.xticks(ind, xlabel)
     plt.savefig(utils.OS_IMAGES_PATH + "/" + "bars_unattended_demand.png")
 
 
